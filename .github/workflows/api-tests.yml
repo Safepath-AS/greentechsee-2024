@@ -14,8 +14,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-        with:
-          path: api
       
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -23,7 +21,7 @@ jobs:
           python-version: '3.x'
       
       - name: Install dependencies
-        run: pip install -r requirements.txt
+        run: pip install -r api/requirements.txt
       
       - name: Run pytest
-        run: pytest
+        run: pytest api
