@@ -9,4 +9,4 @@ def read_root():
 
 @app.get("/test-cd")
 def read_root():
-    return {"Test": "CD"}
+    return {"Test": "CD fail"}
