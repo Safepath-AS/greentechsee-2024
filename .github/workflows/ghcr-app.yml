@@ -1,11 +1,13 @@
 name: Create and publish Docker images
 on:
   push:
+    paths:
+      - 'app/**'
     branches:
       - master
 
 env:
-  REGISTRY: ghcr.io/Safepath-AS/greentechsee-2024
+  REGISTRY: ghcr.io/safepath-as/greentechsee-2024
 
 jobs:
   build-and-push-app:
