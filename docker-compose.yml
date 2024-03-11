@@ -2,14 +2,14 @@ version: "3.9"
 
 services:
   app:
-    image: ghcr.io/safepath-as/greentechsee-2024:app
+    image: ghcr.io/safepath-as/greentechsee-2024/app:latest
     networks:
       - nginx-proxy-network
     restart: always
     environment:
-      - VIRTUAL_HOST=greentechsee.safepath.no
-      - LETSENCRYPT_HOST=greentechsee.safepath.no
-    
+      - VIRTUAL_HOST=${APP_HOST}
+      - LETSENCRYPT_HOST=${APP_HOST}
+
   # Load balancer
   nginx-proxy:
     image: nginxproxy/nginx-proxy

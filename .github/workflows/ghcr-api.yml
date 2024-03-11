@@ -1,8 +1,8 @@
-name: Create and publish App
+name: Create and publish API
 on:
   push:
     paths:
-      - 'app/**'
+      - 'api/**'
     branches:
       - master
 
@@ -26,6 +26,6 @@ jobs:
       - name: Build and push App
         uses: docker/build-push-action@v3
         with:
-          context: app
+          context: api
           push: true
-          tags: ${{ env.REGISTRY }}/app
+          tags: ${{ env.REGISTRY }}/api
