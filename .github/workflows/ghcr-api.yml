@@ -10,7 +10,7 @@ env:
   REGISTRY: ghcr.io/safepath-as/greentechsee-2024
 
 jobs:
-  build-and-push-app:
+  build-and-push-api:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -23,7 +23,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build and push App
+      - name: Build and push Api
         uses: docker/build-push-action@v3
         with:
           context: api
