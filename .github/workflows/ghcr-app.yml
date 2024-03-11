@@ -5,6 +5,7 @@ on:
       - 'app/**'
     branches:
       - master
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io/safepath-as/greentechsee-2024
