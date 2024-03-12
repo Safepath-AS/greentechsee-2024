@@ -69,8 +69,8 @@ SELECT *
 WITH cte_update AS ( 
 	SELECT 
 		 id
-	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS longitude
-	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS latitude
+	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS latitude
+	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS longitude
 	  	,coordinates
 	FROM (
 		SELECT id
@@ -93,8 +93,8 @@ SELECT *
 WITH cte_update AS ( 
 	SELECT 
 		 id
-	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS longitude
-	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS latitude
+	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS latitude
+	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS longitude
 	  	,coordinates
 	FROM (
 		SELECT id
