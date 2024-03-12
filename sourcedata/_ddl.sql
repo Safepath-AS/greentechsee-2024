@@ -155,3 +155,31 @@ SELECT *
     ON a.id = ca.entity_id;
 */
 
+CREATE TABLE public.ship_locations (
+    id SERIAL PRIMARY KEY
+   ,mmsi		INT4
+   ,"type"		VARCHAR(50)
+   ,"timestamp"	timestamp
+   ,longitude	NUMERIC
+   ,latitude	NUMERIC
+   ,"index"		INT4
+);
+
+CREATE INDEX idx_ship_locations_mmsi
+	ON public.ship_locations (mmsi);
+
+CREATE INDEX idx_ship_locations_longitude
+	ON public.ship_locations (longitude);
+
+CREATE INDEX idx_ship_locations_latitude
+	ON public.ship_locations (latitude);
+
+CREATE INDEX idx_ship_locations_index
+	ON public.ship_locations ("index");
+
+CREATE INDEX idx_ship_locations_type
+	ON public.ship_locations ("type");
+
+SELECT *
+  FROM public.ship_locations sl;
+
