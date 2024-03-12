@@ -32,6 +32,42 @@ async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
   completion = await client.chat.completions.create(
     model="gpt-4-turbo-preview",
     messages=messages,
+    tools=[
+      {
+        "type": "function",
+        "function": {
+          "name": "get_closest_hospital",
+          "description": "Get the closest hospital to a given location. Omit the latitude and longitude if the user asks for their own position.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "The latitude of the user's location.",
+              },
+              "longitude": {
+                "type": "number",
+                "description": "The longitude of the user's location.",
+              },
+            },
+          },
+        },
+      },
+    ],
   )
-    
-  return completion.choices[0].message.content
+
+  choice = completion.choices[0]
+  message = choice.message
+
+  if choice.finish_reason == "tool_calls":
+    function = message.tool_calls[0].function
+    return {
+      "type": "function",
+      "function": function.name,
+      "arguments": function.arguments,
+    }
+
+  return {
+    "type": "message",
+    "message": message.content,
+  }

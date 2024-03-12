@@ -59,6 +59,7 @@ export const Chat = ({ onBlur }: ChatProps) => {
             ...(waiting
               ? [
                   {
+                    type: "message",
                     author: "AI",
                     content: "Thinking...",
                   },
@@ -71,7 +72,7 @@ export const Chat = ({ onBlur }: ChatProps) => {
                 key={i}
                 author={message.author}
                 content={message.content}
-                you={message.you}
+                you={message.author === "You"}
               />
             ))}
         </div>

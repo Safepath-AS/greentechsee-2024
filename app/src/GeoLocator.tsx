@@ -13,13 +13,14 @@ export const GeoLocator = ({ onLocationFound }: GeoLocatorProps) => {
 
   useOnMessage((message) => {
     if (message.author === "You") {
-      if (message.content.toLowerCase().includes("location")) {
+      if (message.content.toLowerCase().includes("location!!!!!")) {
         navigator.geolocation.getCurrentPosition((position) => {
           const { latitude, longitude } = position.coords;
           map.flyTo([latitude, longitude], 13, {
             duration: 2,
           });
           addMessage({
+            type: "message",
             author: "AI",
             content: "Moving the map to your current location.",
           });
