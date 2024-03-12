@@ -15,6 +15,8 @@
   --border-radius: 16px;
   --spacing: 8px;
   --chat-margin: 16px;
+
+  -webkit-tap-highlight-color: transparent;
 }
 
 @media (max-width: 768px) {
