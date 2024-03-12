@@ -1,9 +1,10 @@
 import random
 
-from .config import config
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+
+from .config import config
+from .openai import query_gpt
 
 app = FastAPI()
 
@@ -17,7 +18,7 @@ app.add_middleware(
 
 
 @app.get("/")
-def query(query: str):
+async def query(query: str):
     '''Query for some data.'''
     if 'we are sinking' in query.lower():
         return {
@@ -32,9 +33,13 @@ def query(query: str):
             }
         }
 
-    # TODO: OpenAI query and stuff
+    response = await query_gpt(query)
+    return {
+        'author': 'AI',
+        'content': response,
+    }
 
 
 @app.get("/random")
-def read_root():
+def read_random():
     return random.randint(0, 100)
