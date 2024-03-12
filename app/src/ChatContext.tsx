@@ -1,6 +1,8 @@
 import { PropsWithChildren, createContext, useRef, useState } from "react";
 
-export type MessageReceivedCallback = (message: Message) => void;
+export type MessageReceivedCallback = (
+  message: Message
+) => void | Promise<void>;
 
 interface Message {
   author: string;

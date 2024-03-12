@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { forwardRef, useRef, useState } from "react";
 import "./Chat.css";
 import { useMessages } from "./useMessages";
 import { useSendMessage } from "./useSendMessages";
@@ -7,12 +7,17 @@ export const Chat = () => {
   const [collapsed, setCollapsed] = useState(true);
   const messages = useMessages();
 
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
   return (
     <div
       className="chat"
       {...(collapsed && {
         className: "chat collapsed",
-        onClick: () => setCollapsed(false),
+        onClick: () => {
+          setCollapsed(false);
+          inputRef.current?.focus();
+        },
       })}
     >
       <div className="chat-content">
@@ -26,11 +31,16 @@ export const Chat = () => {
             />
           ))}
         </div>
-        <ChatInput />
+        <ChatInput ref={inputRef} />
       </div>
       <button
         className="collapse-button"
-        onClick={() => setCollapsed(!collapsed)}
+        onClick={() => {
+          setCollapsed(!collapsed);
+          if (!collapsed) {
+            inputRef.current?.blur();
+          }
+        }}
         {...(collapsed && {
           style: {
             background: "rgba(255, 255, 255, 0.4)",
@@ -62,13 +72,14 @@ const Message = ({ author, content, you }: MessageProps) => {
   );
 };
 
-const ChatInput = () => {
+const ChatInput = forwardRef<HTMLTextAreaElement>((props, ref) => {
   const [text, setText] = useState("");
   const send = useSendMessage();
 
   return (
     <div className={"chat-input"}>
       <textarea
+        ref={ref}
         placeholder="Type a message..."
         value={text}
         onChange={(e) => setText(e.target.value)}
@@ -86,4 +97,4 @@ const ChatInput = () => {
       />
     </div>
   );
-};
+});
