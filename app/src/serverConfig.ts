@@ -19,7 +19,7 @@ const preReplaceConfig: ServerConfig = {
 };
 
 for (const key of Object.keys(serverConfig) as Array<keyof ServerConfig>) {
-  if (preReplaceConfig[key] === serverConfig[key]) {
+  if (serverConfig[key] === preReplaceConfig[key]) {
     serverConfig[key] = defaultConfig[key];
   }
 }

@@ -81,7 +81,7 @@ $ npm install
 ### Run locally
 
 ```bash
-$ npm start
+$ npm run dev
 ```
 
 ## Api
