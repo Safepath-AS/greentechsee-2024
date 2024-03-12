@@ -51,12 +51,15 @@ export const Chat = () => {
         onClick={() => setCollapsed(!collapsed)}
         {...(collapsed && {
           style: {
-            transform: "rotate(90deg)",
             background: "rgba(255, 255, 255, 0.4)",
           },
         })}
       >
-        ^
+        {collapsed ? (
+          <span className="material-symbols-outlined">open_run</span>
+        ) : (
+          <span className="material-symbols-outlined">collapse_content</span>
+        )}
       </button>
     </div>
   );
