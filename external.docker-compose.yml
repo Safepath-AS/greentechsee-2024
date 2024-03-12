@@ -17,6 +17,24 @@ services:
     environment:
       - VIRTUAL_HOST=${API_HOST}
       - LETSENCRYPT_HOST=${API_HOST}
+  database:
+    image: postgres:13.3
+    command: postgres -c 'max_connections=50'
+    container_name: database
+    networks:
+      - nginx-proxy-network
+    environment:
+      POSTGRES_USER: greentechsee
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: greentechsee
+    ports:
+      - "5432:5432"
+    restart: always
+    volumes:
+      - data:/var/lib/postgresql/data/
+
+volumes:
+  data:
 
 networks:
   nginx-proxy-network:
