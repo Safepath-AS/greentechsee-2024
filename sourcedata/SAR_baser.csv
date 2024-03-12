@@ -1,8 +1,8 @@
-SAR Base;Coordinates
-Bodø;67.2774, 14.4058
-Florø;61.5907, 5.0384
-Sola (Stavanger);58.8803, 5.6315
-Ørland;63.6963, 9.6048
-Banak;70.0678, 24.9752
-Rygge;59.3827, 10.7859
-Evenes;68.4876, 16.6786
+﻿SAR Base;Commune;Coordinates
+Bodø;Bodø;67.2774, 14.4058
+Florø;Kinn;61.5907, 5.0384
+Sola (Stavanger);Sola;58.8803, 5.6315
+Ørland;Ørland;63.6963, 9.6048
+Banak;Porsanger;70.0678, 24.9752
+Rygge;Rygge;59.3827, 10.7859
+Evenes;Evenes;68.4876, 16.6786
