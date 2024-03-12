@@ -1,7 +1,6 @@
 from math import radians, sin, cos, asin, sqrt
 
 def haversine(lon1, lat1, lon2, lat2):
-    print(lon1, lat1, lon2, lat2)
     lon1, lat1, lon2, lat2 = map(radians, [lon1, lat1, lon2, lat2])
     dlon = lon2 - lon1
     dlat = lat2 - lat1
