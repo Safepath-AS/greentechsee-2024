@@ -72,7 +72,7 @@ const Message = ({ author, content, you }: MessageProps) => {
   );
 };
 
-const ChatInput = forwardRef<HTMLTextAreaElement>((props, ref) => {
+const ChatInput = forwardRef<HTMLTextAreaElement>((_props, ref) => {
   const [text, setText] = useState("");
   const send = useSendMessage();
 
