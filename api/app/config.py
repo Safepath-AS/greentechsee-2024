@@ -6,8 +6,13 @@ load_dotenv()
 
 
 class Config:
-    def __init__(self):
-        self.cors_origins = (os.getenv("CORS_ORIGINS") or "*").split(",")
+    @property
+    def cors_origins(self):
+        return (os.getenv("CORS_ORIGINS") or "*").split(",")
+
+    @property
+    def database_url(self):
+        return os.getenv("DATABASE_URL")
 
 
 config = Config()

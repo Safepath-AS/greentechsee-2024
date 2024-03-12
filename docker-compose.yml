@@ -19,6 +19,7 @@ services:
       - VIRTUAL_HOST=${API_HOST}
       - LETSENCRYPT_HOST=${API_HOST}
       - CORS_ORIGINS=https://${APP_HOST}
+      - DATABASE_URL=postgresql://greentechsee:${POSTGRES_PASSWORD}@database:${POSTGRES_PORT}/greentechsee
   database:
     image: postgres:13.3
     command: postgres -c 'max_connections=50'
