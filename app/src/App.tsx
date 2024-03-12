@@ -1,14 +1,11 @@
 import "./App.css";
-import { RandomNumber } from "./RandomNumber";
+import { Map } from "./Map";
 
 function App() {
   return (
-    <>
-      <h1>Terje har visjoner.</h1>
-      <p>
-        Random tall: <RandomNumber />
-      </p>
-    </>
+    <div className="main">
+      <Map />
+    </div>
   );
 }
 
