@@ -20,13 +20,22 @@ app.add_middleware(
 
 
 @app.get("/")
-def read_root():
-    return {"Hello": "GreenTech!"}
+def query(query: str):
+    '''Query for some data.'''
+    if 'we are sinking' in query.lower():
+        return {
+            'author': 'AI',
+            'content': 'Here is a relevant coordinate for you.',
+            'data': {
+                'type': 'sinking',
+                'location': {
+                    'latitude': 40.7128,
+                    'longitude': -74.0060
+                }
+            }
+        }
 
-
-@app.get("/test-cd")
-def read_root():
-    return {"Test": "CD"}
+    # TODO: OpenAI query and stuff
 
 
 @app.get("/random")

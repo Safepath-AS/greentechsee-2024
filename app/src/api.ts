@@ -10,6 +10,12 @@ const get = async (endpoint: string) => {
   return data;
 };
 
+export const useSendQuery = () => {
+  return (text: string) => {
+    return get(`/?query=${text}`);
+  };
+};
+
 export const useRandomNumber = () => {
   const result = useQuery({
     queryKey: ["randomNumber"],

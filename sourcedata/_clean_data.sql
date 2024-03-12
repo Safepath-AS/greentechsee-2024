@@ -63,3 +63,52 @@ SELECT *
   
 SELECT *
   FROM public.sar_bases sb;
+ 
+
+------------
+WITH cte_update AS ( 
+	SELECT 
+		 id
+	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS longitude
+	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS latitude
+	  	,coordinates
+	FROM (
+		SELECT id
+			  ,REPLACE(REPLACE(c.coordinates , 'POINT(', ''), ')', '') AS coordinates
+		  FROM public.emergency_ports c
+	) AS subquery
+)
+UPDATE public.emergency_ports tab
+   SET longitude = upd.longitude
+      ,latitude = upd.latitude
+  FROM cte_update upd
+ WHERE tab.id = upd.id;
+
+ALTER TABLE public.emergency_ports DROP COLUMN coordinates;
+
+SELECT *
+  FROM public.emergency_ports ep;
+  
+--
+WITH cte_update AS ( 
+	SELECT 
+		 id
+	  	,SPLIT_PART(coordinates, ' ', 1)::NUMERIC AS longitude
+	  	,SPLIT_PART(coordinates, ' ', 2)::NUMERIC AS latitude
+	  	,coordinates
+	FROM (
+		SELECT id
+			  ,REPLACE(REPLACE(c.coordinates , 'POINT(', ''), ')', '') AS coordinates
+		  FROM public.emergency_depots c
+	) AS subquery
+)
+UPDATE public.emergency_depots tab
+   SET longitude = upd.longitude
+      ,latitude = upd.latitude
+  FROM cte_update upd
+ WHERE tab.id = upd.id;
+
+ALTER TABLE public.emergency_depots DROP COLUMN coordinates;
+
+SELECT *
+  FROM public.emergency_depots ep;
