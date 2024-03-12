@@ -140,4 +140,18 @@ VALUES
     ('hospital', 1, 'rating', '4.5'),
     ('hospital', 2, 'beds', '980'),
     ('hospital', 2, 'rating', '4.2');
+
+-- Sample select with join
+WITH cte_attributes AS (
+	SELECT att.entity_id 
+		  ,att.attribute_name 
+		  ,att.attribute_value 
+	  FROM public."attributes" att
+	 WHERE att.entity_type = 'airport' -- FILTER attributes 'airport', 'hospital', 'sar_base', 'emergency_port', 'emergency_depot'
+)
+SELECT *
+  FROM public.airports a 
+  LEFT JOIN cte_attributes ca
+    ON a.id = ca.entity_id;
 */
+
