@@ -9,7 +9,7 @@ services:
     environment:
       - VIRTUAL_HOST=${APP_HOST}
       - LETSENCRYPT_HOST=${APP_HOST}
-      - API_URL=${API_URL}
+      - API_URL=https://${API_HOST}
   api:
     image: ghcr.io/safepath-as/greentechsee-2024/api:latest
     networks:
