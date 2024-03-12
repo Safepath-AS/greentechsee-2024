@@ -1,4 +1,6 @@
 import { PropsWithChildren, createContext, useRef, useState } from "react";
+import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
+import { useSendQuery } from "./api";
 
 export type MessageReceivedCallback = (
   message: Message
@@ -8,6 +10,7 @@ interface Message {
   author: string;
   content: string;
   you?: boolean;
+  data?: WhatAreYouSinkingAboutResponse;
 }
 
 interface ChatContextData {
@@ -27,6 +30,8 @@ export const ChatContext = createContext<ChatContextData>({
 });
 
 export const ChatProvider = ({ children }: PropsWithChildren) => {
+  const sendQuery = useSendQuery();
+
   const [messages, setMessages] = useState<Message[]>([
     {
       author: "AI",
@@ -39,8 +44,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
     notifySubscribers(message);
   };
 
-  const send = (message: string) => {
+  const send = async (message: string) => {
     addMessage({ author: "You", content: message, you: true });
+
+    const result = await sendQuery(message);
+    if (result) {
+      addMessage(result as Message);
+    }
   };
 
   const subscribersRef = useRef<Array<MessageReceivedCallback>>([]);
