@@ -1,29 +1,11 @@
 import { useState } from "react";
 import "./Chat.css";
-
-const messages = [
-  {
-    author: "You",
-    content: "Hello!",
-    you: true,
-  },
-  {
-    author: "AI",
-    content: "Hi there!",
-  },
-  {
-    author: "You",
-    content: "How are you?",
-    you: true,
-  },
-  {
-    author: "AI",
-    content: "I'm doing well, thank you.",
-  },
-];
+import { useMessages } from "./useMessages";
+import { useSendMessage } from "./useSendMessages";
 
 export const Chat = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
+  const messages = useMessages();
 
   return (
     <div
@@ -51,12 +33,15 @@ export const Chat = () => {
         onClick={() => setCollapsed(!collapsed)}
         {...(collapsed && {
           style: {
-            transform: "rotate(90deg)",
             background: "rgba(255, 255, 255, 0.4)",
           },
         })}
       >
-        ^
+        {collapsed ? (
+          <span className="material-symbols-outlined">open_run</span>
+        ) : (
+          <span className="material-symbols-outlined">collapse_content</span>
+        )}
       </button>
     </div>
   );
@@ -78,14 +63,26 @@ const Message = ({ author, content, you }: MessageProps) => {
 };
 
 const ChatInput = () => {
+  const [text, setText] = useState("");
+  const send = useSendMessage();
+
   return (
     <div className={"chat-input"}>
       <textarea
         placeholder="Type a message..."
-        // onInput={(e) => {
-        //   e.currentTarget.style.height = "auto";
-        //   e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
-        // }}
+        value={text}
+        onChange={(e) => setText(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            send(text);
+            setText("");
+          }
+        }}
+        onInput={(e) => {
+          e.currentTarget.style.height = "auto";
+          e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+        }}
       />
     </div>
   );
