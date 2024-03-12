@@ -13,12 +13,12 @@ _Terje har visjoner._
 ## OKR-er (objectives and key results)
 
 - **Objective**: build a data set describing emergency functions related to health, safety and environmental aspects
-    - **Key result**: combine different data sets to build one set that identifies location and function of bases and vessels that can assist in offshore health emergencies and oil leaks
+  - **Key result**: combine different data sets to build one set that identifies location and function of bases and vessels that can assist in offshore health emergencies and oil leaks
 - **Objective**: Use new and smart technology to simplify information extraction
-    - **Key result**: use AI to convert free text query into a query into the assembled data set. 
+  - **Key result**: use AI to convert free text query into a query into the assembled data set.
 - **Objective**: Create a simple, accessible and readable User Interface in the event of an emergency
-    - **Key result**: Use maps to simplify localization of necessary infrastructure
-    - **Key result**: Have a Universal Design for the website
+  - **Key result**: Use maps to simplify localization of necessary infrastructure
+  - **Key result**: Have a Universal Design for the website
 
 # Running the app using docker
 
@@ -81,7 +81,7 @@ $ npm install
 ### Run locally
 
 ```bash
-$ npm start
+$ npm run dev
 ```
 
 ## Api
