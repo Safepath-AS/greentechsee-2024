@@ -23,14 +23,42 @@ If you are developing a production application, we recommend updating the config
 export default {
   // other rules...
   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
+    ecmaVersion: "latest",
+    sourceType: "module",
+    project: ["./tsconfig.json", "./tsconfig.node.json"],
     tsconfigRootDir: __dirname,
   },
-}
+};
 ```
 
 - Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+
+# Api
+
+Built with [FastAPI](https://fastapi.tiangolo.com/)
+
+## Requirements
+
+Dowload and install python from [python.org](https://www.python.org/downloads/)
+
+> [!NOTE]  
+> Make sure to change directory to the `api` folder by running `cd api`.
+
+To install requiremnts run:
+
+```bash
+$ pip install -r requirements.txt
+```
+
+## Run locally
+
+> [!NOTE]  
+> Make sure to change directory to the `api/app` folder by running `cd app` if you followed the previous step, and `cd api/app` from root.
+
+To run the server locally run:
+
+```bash
+$ uvicorn main:app --reload
+```
