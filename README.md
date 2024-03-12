@@ -1,45 +1,94 @@
 # Shellsea
 
-Teaminfo.
+_Terje har visjoner._
 
-# App
+## Medlemmer
 
-## React + TypeScript + Vite
+- Per Christian Kvalvik
+- Espen Kvernstad
+- Bartek Ostrowski
+- Gøran Sildnes Gedde-Dahl
+- Martin Nord Flote
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+## OKR-er (objectives and key results)
 
-Currently, two official plugins are available:
+- **Objective**: build a data set describing emergency functions related to health, safety and environmental aspects
+    - **Key result**: combine different data sets to build one set that identifies location and function of bases and vessels that can assist in offshore health emergencies and oil leaks
+- **Objective**: Use new and smart technology to simplify information extraction
+    - **Key result**: use AI to convert free text query into a query into the assembled data set. 
+- **Objective**: Create a simple, accessible and readable User Interface in the event of an emergency
+    - **Key result**: Use maps to simplify localization of necessary infrastructure
+    - **Key result**: Have a Universal Design for the website
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+# Running the app using docker
 
-### Expanding the ESLint configuration
+GitHub Actions are used to build and push the docker images to the GitHub Container Registry on every push to the main branch.
+These images are public and you can use the docker-compose.yml to run the app locally. This will run a local nginx-proxy
+which exposes port 80 and 443 to the internet, and acme-companion which will automatically generate SSL certificates using
+Let's Encrypt.
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+## Running as the single application on a server
 
-- Configure the top-level `parserOptions` property like this:
+To run the app using docker, make sure you have docker installed on your machine.
 
-```js
-export default {
-  // other rules...
-  parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
-    project: ["./tsconfig.json", "./tsconfig.node.json"],
-    tsconfigRootDir: __dirname,
-  },
-};
+Copy the .env.template file to .env and fill in the required environment variables.
+
+```bash
+$ cp .env.template .env
 ```
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+Then run the following command to start the app:
 
-# Api
+```bash
+$ docker-compose up
+```
+
+## Running multiple applications on the same server
+
+We have separated the nginx-proxy into a single compose file in case you might want to run multiple applications on the same server.
+Use the two compose configs separately for this.
+
+Example:
+
+```bash
+docker-compose -f nginx.docker-compose.yml up -d
+docker-compose -f external.docker-compose.yml up -d
+```
+
+You can then setup your other applications using similar setups as the `external.docker-compose.yml` file.
+
+# Development
+
+Guides to run the app locally.
+
+## App
+
+Powered by [React](https://reactjs.org/)
+
+### Requirements
+
+Dowload and install node LTS from [nodejs.org](https://nodejs.org/en/download/)
+
+> [!NOTE]
+> Make sure to change directory to the `app` folder by running `cd app`.
+
+To install requiremnts run:
+
+```bash
+$ npm install
+```
+
+### Run locally
+
+```bash
+$ npm start
+```
+
+## Api
 
 Built with [FastAPI](https://fastapi.tiangolo.com/)
 
-## Requirements
+### Requirements
 
 Dowload and install python from [python.org](https://www.python.org/downloads/)
 
@@ -52,13 +101,10 @@ To install requiremnts run:
 $ pip install -r requirements.txt
 ```
 
-## Run locally
-
-> [!NOTE]  
-> Make sure to change directory to the `api/app` folder by running `cd app` if you followed the previous step, and `cd api/app` from root.
+### Run locally
 
 To run the server locally run:
 
 ```bash
-$ uvicorn main:app --reload
+$ uvicorn app.main:app --reload
 ```
