@@ -68,7 +68,7 @@ CREATE TABLE public.emergency_ports (
 	 id SERIAL PRIMARY KEY
 	,"name"			TEXT
 	,commune		TEXT
-	,longitude		NUMERIC
+	,longitude	NUMERIC
 	,latitude		NUMERIC
 );
 
@@ -104,3 +104,40 @@ CREATE INDEX idx_emergency_depots_longitude
 	
 CREATE INDEX idx_emergency_depots_latitude
 	ON public.emergency_depots (latitude);
+
+--
+CREATE TABLE public.attributes (
+    id SERIAL PRIMARY KEY,
+    entity_type 		VARCHAR(50),
+    entity_id 			INTEGER,
+    attribute_name 	VARCHAR(100),
+    attribute_value VARCHAR(100)
+);
+
+CREATE INDEX idx_entity_type 
+	ON public.attributes (entity_type);
+
+CREATE INDEX idx_entity_id 
+	ON public.attributes (entity_id);
+
+CREATE INDEX idx_attribute_name 
+	ON public.attributes (attribute_name);
+
+-- Add a check constraint to the entity_type column
+ALTER TABLE public.attributes
+ADD CONSTRAINT check_entity_type
+CHECK (entity_type IN ('airport', 'hospital', 'sar_base', 'emergency_port', 'emergency_depot'));
+
+/*
+-- Sample insert
+INSERT INTO public.attributes (entity_type, entity_id, attribute_name, attribute_value)
+VALUES 
+    ('airport', 1, 'terminals', '6'),
+    ('airport', 1, 'year_opened', '1948'),
+    ('airport', 2, 'terminals', '4'),
+    ('airport', 2, 'year_opened', '1946'),
+    ('hospital', 1, 'beds', '1172'),
+    ('hospital', 1, 'rating', '4.5'),
+    ('hospital', 2, 'beds', '980'),
+    ('hospital', 2, 'rating', '4.2');
+*/
