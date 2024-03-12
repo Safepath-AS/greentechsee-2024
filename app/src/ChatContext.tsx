@@ -6,7 +6,7 @@ export type MessageReceivedCallback = (
   message: Message
 ) => void | Promise<void>;
 
-interface Message {
+export interface Message {
   author: string;
   content: string;
   you?: boolean;
@@ -15,6 +15,7 @@ interface Message {
 
 interface ChatContextData {
   messages: Message[];
+  waiting: boolean;
   addMessage: (message: Message) => void;
   send: (message: string) => void;
   subscribe: (callback: MessageReceivedCallback) => void;
@@ -23,6 +24,7 @@ interface ChatContextData {
 
 export const ChatContext = createContext<ChatContextData>({
   messages: [],
+  waiting: false,
   addMessage: () => {},
   send: () => {},
   subscribe: () => {},
@@ -32,6 +34,7 @@ export const ChatContext = createContext<ChatContextData>({
 export const ChatProvider = ({ children }: PropsWithChildren) => {
   const sendQuery = useSendQuery();
 
+  const [waiting, setWaiting] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
       author: "AI",
@@ -47,10 +50,20 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
   const send = async (message: string) => {
     addMessage({ author: "You", content: message, you: true });
 
-    const result = await sendQuery(message);
-    if (result) {
-      addMessage(result as Message);
+    setWaiting(true);
+    try {
+      const result = await sendQuery(message, messages);
+      if (result) {
+        addMessage(result as Message);
+      } else {
+        addMessage({ author: "AI", content: "Failed, please try again." });
+      }
+    } catch (error) {
+      addMessage({ author: "AI", content: "Failed, please try again." });
+      console.error(error);
     }
+
+    setWaiting(false);
   };
 
   const subscribersRef = useRef<Array<MessageReceivedCallback>>([]);
@@ -73,7 +86,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
 
   return (
     <ChatContext.Provider
-      value={{ messages, addMessage, send, subscribe, unsubscribe }}
+      value={{ messages, waiting, addMessage, send, subscribe, unsubscribe }}
     >
       {children}
     </ChatContext.Provider>

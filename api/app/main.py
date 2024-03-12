@@ -2,9 +2,12 @@ import random
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
 
 from .config import config
 from .openai import query_gpt
+from .api_models import HistoryMessage
 
 app = FastAPI()
 
@@ -17,8 +20,8 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-async def query(query: str):
+@app.post("/")
+async def query(query: str, history: list[HistoryMessage] = []):
     '''Query for some data.'''
     if 'we are sinking' in query.lower():
         return {
@@ -33,7 +36,7 @@ async def query(query: str):
             }
         }
 
-    response = await query_gpt(query)
+    response = await query_gpt(query, history)
     return {
         'author': 'AI',
         'content': response,
