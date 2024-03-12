@@ -4,7 +4,7 @@ import { useMessages } from "./useMessages";
 import { useSendMessage } from "./useSendMessages";
 
 export const Chat = () => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const messages = useMessages();
 
   return (

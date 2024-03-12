@@ -1,11 +1,6 @@
-import { useContext } from "react";
-import { ChatContext } from "./ChatContext";
+import { useChatContext } from "./useChatContext";
 
 export const useSendMessage = () => {
-  const context = useContext(ChatContext);
-  if (!context) {
-    throw new Error("useSendMessage must be used within a ChatProvider");
-  }
-
+  const context = useChatContext();
   return context.send;
 };

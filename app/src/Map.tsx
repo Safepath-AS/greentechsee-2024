@@ -1,7 +1,14 @@
 import "./Map.css";
 import { MapContainer, TileLayer } from "react-leaflet";
+import { useOnMessage } from "./useOnMessage";
 
 export const Map = () => {
+  useOnMessage((message) => {
+    if (message.author === "You") {
+      console.log("You said:", message.content);
+    }
+  });
+
   return (
     <MapContainer
       center={[51.505, -0.09]}
