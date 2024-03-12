@@ -1,0 +1,137 @@
+.chat {
+  border-radius: var(--border-radius);
+  position: absolute;
+
+  z-index: 1000;
+
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.31);
+  border-radius: 16px;
+  box-shadow: -8px 8px 49px -11px rgba(0, 0, 0, 0.37);
+  backdrop-filter: blur(6.7px);
+  border: 1px solid rgba(255, 255, 255, 0.57);
+  color: #1d1d1d;
+
+  transition: all 0.2s ease-in-out;
+}
+
+.chat.collapsed {
+  height: calc(var(--spacing) * 10);
+  overflow: hidden;
+  user-select: none;
+  cursor: pointer;
+  color: rgba(0, 0, 0, 0.5);
+  background: rgba(255, 255, 255, 0.31);
+}
+
+.chat:hover {
+  box-shadow: -8px 8px 49px -11px rgba(0, 0, 0, 0.6);
+}
+
+@media (max-width: 768px) {
+  .chat {
+    width: calc(100vw - calc(var(--chat-margin) * 2));
+    bottom: var(--chat-margin);
+    right: var(--chat-margin);
+    height: 40vh;
+  }
+
+  /* .chat.collapsed {
+    width: 100%;
+  } */
+}
+
+@media (min-width: 768px) {
+  .chat {
+    top: var(--chat-margin);
+    right: var(--chat-margin);
+    width: 400px;
+    height: 600px;
+  }
+
+  .chat.collapsed {
+    width: 250px;
+  }
+
+  .chat.collapsed:hover {
+    width: 400px;
+  }
+}
+
+.chat-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.collapse-button {
+  position: absolute;
+  right: var(--spacing);
+  top: var(--spacing);
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s ease-in-out;
+  padding-top: 4px;
+  background: rgba(255, 255, 255, 0.6);
+}
+
+.messages {
+  display: flex;
+  flex-direction: column-reverse;
+  width: calc(100% - var(--spacing) * 2);
+  height: 100%;
+  min-height: 70px;
+  overflow: hidden;
+  padding: var(--spacing);
+}
+
+.message {
+  padding: var(--spacing);
+  margin-top: var(--spacing);
+  margin-bottom: var(--spacing);
+  border-radius: var(--border-radius);
+  color: #1d1d1d;
+  max-width: 60%;
+  word-wrap: break-word;
+  transition: all 0.2s ease-in-out;
+  white-space: pre-wrap;
+
+  /* From https://css.glass */
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.message.you {
+  align-self: flex-end;
+  text-align: right;
+}
+
+.message-author {
+  color: rgba(0, 0, 0, 0.5);
+  font-size: 0.8rem;
+  margin-bottom: var(--spacing);
+}
+
+.chat-input {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing);
+  background: rgba(255, 255, 255, 0.16);
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(8px);
+  color: #1d1d1d;
+  margin-top: var(--spacing);
+
+  transition: all 0.2s ease-in-out;
+}
+
+.chat-input > textarea {
+  width: 100%;
+  transition: all 0.1s ease-in-out;
+}
