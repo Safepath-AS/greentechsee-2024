@@ -1,3 +1,5 @@
+import random
+
 from typing import Union
 from fastapi import FastAPI
 
@@ -10,3 +12,7 @@ def read_root():
 @app.get("/test-cd")
 def read_root():
     return {"Test": "CD"}
+
+@app.get("/random")
+def read_root():
+    return random.randint(0, 100)
