@@ -20,5 +20,8 @@ FROM nginx:1.25.4-alpine as deploy
 RUN rm -rf /usr/share/nginx/html/*
 
 COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/docker-add-config.sh /
+
+ENTRYPOINT ["sh", "docker-add-config.sh"]
 
 CMD ["nginx", "-g", "daemon off;"]
