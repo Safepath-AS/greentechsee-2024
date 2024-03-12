@@ -126,7 +126,7 @@
   box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
   backdrop-filter: blur(8px);
   color: #1d1d1d;
-  margin-top: var(--spacing);
+  margin: var(--spacing);
 
   transition: all 0.2s ease-in-out;
 }

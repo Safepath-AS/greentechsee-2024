@@ -1,17 +1,47 @@
-import { forwardRef, useRef, useState } from "react";
+import { forwardRef, useEffect, useRef, useState } from "react";
 import "./Chat.css";
 import { useMessages } from "./useMessages";
 import { useSendMessage } from "./useSendMessages";
 
-export const Chat = () => {
+interface ChatProps {
+  onBlur: () => void;
+}
+
+export const Chat = ({ onBlur }: ChatProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const messages = useMessages();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
+  useEffect(() => {
+    const focus = (e: KeyboardEvent) => {
+      // Focus
+      if ((collapsed && e.key.match(/^[a-zA-Z]$/)) || e.key === "Tab") {
+        if (collapsed) {
+          setCollapsed(false);
+        }
+        inputRef.current?.focus();
+      }
+
+      // Unfocus
+      if ((!collapsed && e.key === "Escape") || e.key === "Tab") {
+        inputRef.current?.blur();
+        setCollapsed(true);
+      }
+    };
+
+    document.addEventListener("keydown", focus);
+
+    return () => {
+      document.removeEventListener("keydown", focus);
+    };
+  }, [inputRef, collapsed]);
+
   return (
     <div
+      tabIndex={0}
       className="chat"
+      onClick={() => collapsed && inputRef.current?.focus()}
       {...(collapsed && {
         className: "chat collapsed",
         onClick: () => {
@@ -31,7 +61,11 @@ export const Chat = () => {
             />
           ))}
         </div>
-        <ChatInput ref={inputRef} />
+        <ChatInput
+          ref={inputRef}
+          onFocus={() => setCollapsed(false)}
+          onBlur={onBlur}
+        />
       </div>
       <button
         className="collapse-button"
@@ -72,29 +106,38 @@ const Message = ({ author, content, you }: MessageProps) => {
   );
 };
 
-const ChatInput = forwardRef<HTMLTextAreaElement>((_props, ref) => {
-  const [text, setText] = useState("");
-  const send = useSendMessage();
+interface ChatInputProps {
+  onFocus: () => void;
+  onBlur: () => void;
+}
 
-  return (
-    <div className={"chat-input"}>
-      <textarea
-        ref={ref}
-        placeholder="Type a message..."
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" && !e.shiftKey) {
-            e.preventDefault();
-            send(text);
-            setText("");
-          }
-        }}
-        onInput={(e) => {
-          e.currentTarget.style.height = "auto";
-          e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
-        }}
-      />
-    </div>
-  );
-});
+const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
+  ({ onFocus, onBlur }, ref) => {
+    const [text, setText] = useState("");
+    const send = useSendMessage();
+
+    return (
+      <div className={"chat-input"}>
+        <textarea
+          ref={ref}
+          onFocus={onFocus}
+          onBlur={onBlur}
+          placeholder="Type a message..."
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              send(text);
+              setText("");
+            }
+          }}
+          onInput={(e) => {
+            e.currentTarget.style.height = "auto";
+            e.currentTarget.style.height = e.currentTarget.scrollHeight + "px";
+          }}
+        />
+      </div>
+    );
+  }
+);
