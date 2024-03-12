@@ -1,0 +1,19 @@
+from pydantic import BaseModel
+
+class PreparednessResourceModel(BaseModel):
+    id: int
+    name: str
+    latitude: float
+    longitude: float
+
+    class Config:
+        from_attributes = False
+
+class HospitalModel(PreparednessResourceModel):
+    pass
+
+class AirportModel(PreparednessResourceModel):
+    pass
+
+class SarBaseModel(PreparednessResourceModel):
+    pass

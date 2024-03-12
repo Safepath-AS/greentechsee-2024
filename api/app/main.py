@@ -4,7 +4,7 @@ from .utils import haversine
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from typing import Type
+from typing import Type, List
 from sqlalchemy.orm import Query
 from sqlalchemy.ext.declarative import DeclarativeMeta
 
@@ -13,6 +13,7 @@ from .openai import query_gpt
 from .api_models import HistoryMessage
 
 from .database import session, Hospital, Airport, SarBase
+from .models import HospitalModel, AirportModel, SarBaseModel
 
 
 app = FastAPI()
@@ -64,31 +65,31 @@ def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[Declar
             closest_entity = entity
     return closest_entity
 
-@app.get("/hospitals", description="Get all hospitals")
+@app.get("/hospitals", response_model=List[HospitalModel], description="Get all hospitals")
 def read_hospitals():
     return session.query(Hospital).all()
 
 
-@app.get("/hospitals/closest", description="Get the closest hospital to a given location")
+@app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
 def read_closest_hospital(lat: float, lon: float):
     return get_closest_entity(lat, lon, session.query(Hospital), Hospital)
 
 
-@app.get("/airports", description="Get all airports")
+@app.get("/airports", response_model=List[AirportModel], description="Get all airports")
 def read_airports():
     return session.query(Airport).all()
 
 
-@app.get("/airports/closest", description="Get the closest airport to a given location")
+@app.get("/airports/closest", response_model=AirportModel, description="Get the closest airport to a given location")
 def read_closest_airport(lat: float, lon: float):
     return get_closest_entity(lat, lon, session.query(Airport), Airport)
 
 
-@app.get("/sar_bases", description="Get all Sar bases")
+@app.get("/sar_bases", response_model=List[SarBaseModel], description="Get all Sar bases")
 def read_sar_bases():
     return session.query(SarBase).all()
 
 
-@app.get("/sar_bases/closest", description="Get the closest Sar base to a given location")
+@app.get("/sar_bases/closest", response_model=SarBaseModel, description="Get the closest Sar base to a given location")
 def read_closest_sar_base(lat: float, lon: float):
     return get_closest_entity(lat, lon, session.query(SarBase), SarBase)
