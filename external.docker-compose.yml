@@ -9,6 +9,14 @@ services:
     environment:
       - VIRTUAL_HOST=${APP_HOST}
       - LETSENCRYPT_HOST=${APP_HOST}
+  api:
+    image: ghcr.io/safepath-as/greentechsee-2024/api:latest
+    networks:
+      - nginx-proxy-network
+    restart: always
+    environment:
+      - VIRTUAL_HOST=${API_HOST}
+      - LETSENCRYPT_HOST=${API_HOST}
 
 networks:
   nginx-proxy-network:
