@@ -3,6 +3,7 @@ from pydantic import BaseModel
 class PreparednessResourceModel(BaseModel):
     id: int
     name: str
+    commune: str
     latitude: float
     longitude: float
 
