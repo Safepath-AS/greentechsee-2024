@@ -5,16 +5,22 @@ from .main import app
 client = TestClient(app)
 
 
-def test_read_main():
+def test_read_query_without_parameter():
     response = client.get("/")
-    assert response.status_code == 200
-    assert response.json() == {"Hello": "GreenTech!"}
+    assert response.status_code == 422
 
 
-def test_read_test_cd():
-    response = client.get("/test-cd")
+def test_read_query_with_query():
+    response = client.get("/?query=we%20are%20sinking")
     assert response.status_code == 200
-    assert response.json() == {"Test": "CD"}
+    assert response.json() == {
+        "author": "AI",
+        "content": "Here is a relevant coordinate for you.",
+        "data": {
+            "type": "sinking",
+            "location": {"latitude": 40.7128, "longitude": -74.006},
+        },
+    }
 
 
 def test_read_random():
