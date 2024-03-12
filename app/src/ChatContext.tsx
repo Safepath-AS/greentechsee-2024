@@ -1,7 +1,15 @@
 import { PropsWithChildren, createContext, useRef, useState } from "react";
 import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
-import { getClosestHospital, getUserLocation, useSendQuery } from "./api";
+import {
+  getClosestAirport,
+  getClosestHospital,
+  getClosestSarBase,
+  getUserLocation,
+  useSendQuery,
+} from "./api";
 import { ClosestHospitalResponse } from "./ClosestHospital";
+import { ClosestAirportResponse } from "./ClosestAirport";
+import { ClosestSarBaseResponse } from "./ClosestSarBase";
 
 export type MessageReceivedCallback = (
   message: Message
@@ -12,7 +20,11 @@ export interface Message {
   author: string;
   content: string;
   you?: boolean;
-  data?: WhatAreYouSinkingAboutResponse | ClosestHospitalResponse;
+  data?:
+    | WhatAreYouSinkingAboutResponse
+    | ClosestHospitalResponse
+    | ClosestAirportResponse
+    | ClosestSarBaseResponse;
 }
 
 interface ChatContextData {
@@ -64,29 +76,12 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           const args = JSON.parse(result.arguments.replace(/'/g, '"'));
 
           if (result.function === "get_closest_hospital") {
-            // Empty arguments
-            let position: {
-              latitude: number;
-              longitude: number;
-            };
-            if (Object.keys(args).length === 0) {
-              const geo = await getUserLocation();
-              position = {
-                latitude: geo.coords.latitude,
-                longitude: geo.coords.longitude,
-              };
-            } else {
-              position = {
-                latitude: args.latitude as number,
-                longitude: args.longitude as number,
-              };
-            }
+            const position = await getPosition(args);
 
             const hospital = await getClosestHospital(
               position.latitude,
               position.longitude
             );
-            console.log(hospital);
             addMessage({
               type: "message",
               author: "AI",
@@ -94,6 +89,38 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               data: {
                 type: "hospital",
                 hospital: hospital,
+              },
+            });
+          } else if (result.function === "get_closest_airport") {
+            const position = await getPosition(args);
+
+            const airport = await getClosestAirport(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest airport is ${airport.name} in ${airport.commune}.`,
+              data: {
+                type: "airport",
+                airport: airport,
+              },
+            });
+          } else if (result.function === "get_closest_sar_base") {
+            const position = await getPosition(args);
+
+            const sarBase = await getClosestSarBase(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest search and rescue helicopter base is ${sarBase.name} in ${sarBase.commune}.`,
+              data: {
+                type: "sarBase",
+                sarBase: sarBase,
               },
             });
           }
@@ -142,4 +169,25 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
       {children}
     </ChatContext.Provider>
   );
+};
+
+const getPosition = async (args: { latitude?: number; longitude?: number }) => {
+  // Empty arguments
+  let position: {
+    latitude: number;
+    longitude: number;
+  };
+  if (Object.keys(args).length === 0) {
+    const geo = await getUserLocation();
+    position = {
+      latitude: geo.coords.latitude,
+      longitude: geo.coords.longitude,
+    };
+  } else {
+    position = {
+      latitude: args.latitude as number,
+      longitude: args.longitude as number,
+    };
+  }
+  return position;
 };

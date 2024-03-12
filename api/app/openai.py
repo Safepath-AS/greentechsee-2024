@@ -53,6 +53,46 @@ async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
           },
         },
       },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_closest_airport",
+          "description": "Get the closest airport to a given location. Omit the latitude and longitude if the user asks for their own position.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "The latitude of the user's location.",
+              },
+              "longitude": {
+                "type": "number",
+                "description": "The longitude of the user's location.",
+              },
+            },
+          },
+        },
+      },
+      {
+        "type": "function",
+        "function": {
+          "name": "get_closest_sar_base",
+          "description": "Get the closest searh and rescue helicopter base to a given location. Omit the latitude and longitude if the user asks for their own position.",
+          "parameters": {
+            "type": "object",
+            "properties": {
+              "latitude": {
+                "type": "number",
+                "description": "The latitude of the user's location.",
+              },
+              "longitude": {
+                "type": "number",
+                "description": "The longitude of the user's location.",
+              },
+            },
+          },
+        },
+      }
     ],
   )
 

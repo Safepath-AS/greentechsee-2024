@@ -44,6 +44,28 @@ export const getClosestHospital = (latitude: number, longitude: number) => {
   return get(`/hospitals/closest?lat=${latitude}&lon=${longitude}`);
 };
 
+export interface Airport {
+  latitude: number;
+  longitude: number;
+  name: string;
+  commune: string;
+}
+
+export const getClosestAirport = (latitude: number, longitude: number) => {
+  return get(`/airports/closest?lat=${latitude}&lon=${longitude}`);
+};
+
+export interface SarBase {
+  latitude: number;
+  longitude: number;
+  name: string;
+  commune: string;
+}
+
+export const getClosestSarBase = (latitude: number, longitude: number) => {
+  return get(`/sar_bases/closest?lat=${latitude}&lon=${longitude}`);
+};
+
 export const useRandomNumber = () => {
   const result = useQuery({
     queryKey: ["randomNumber"],

@@ -6,6 +6,8 @@ import { GeoLocation } from "./GeoLocation";
 import { Map as LeafletMap } from "leaflet";
 import { WhatAreYouSinkingAbout } from "./WhatAreYouSinkingAbout";
 import { ClosestHospital } from "./ClosestHospital";
+import { ClosestAirport } from "./ClosestAirport";
+import { ClosestSarBase } from "./ClosestSarBase";
 
 export const Map = forwardRef<LeafletMap>((_props, ref) => {
   const [userLocation, setUserLocation] = useState<GeoLocation | undefined>();
@@ -25,6 +27,8 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
       />
       <GeoLocator onLocationFound={setUserLocation} />
       <ClosestHospital />
+      <ClosestAirport />
+      <ClosestSarBase />
       <WhatAreYouSinkingAbout />
       {userLocation && (
         <Marker position={[userLocation.latitude, userLocation.longitude]} />
