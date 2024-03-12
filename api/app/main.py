@@ -1,10 +1,14 @@
 import random
-
-from .config import config
 from .utils import haversine
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from pydantic import BaseModel
+
+
+from .config import config
+from .openai import query_gpt
+from .api_models import HistoryMessage
 
 from .database import session, Hospital, Airport, SarBase
 
@@ -19,8 +23,8 @@ app.add_middleware(
 )
 
 
-@app.get("/")
-def query(query: str):
+@app.post("/")
+async def query(query: str, history: list[HistoryMessage] = []):
     '''Query for some data.'''
     if 'we are sinking' in query.lower():
         return {
@@ -35,11 +39,15 @@ def query(query: str):
             }
         }
 
-    # TODO: OpenAI query and stuff
+    response = await query_gpt(query, history)
+    return {
+        'author': 'AI',
+        'content': response,
+    }
 
 
 @app.get("/random")
-def read_root():
+def read_random():
     return random.randint(0, 100)
 
 @app.get("/hospitals", description="Get all hospitals")

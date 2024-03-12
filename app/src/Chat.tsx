@@ -2,6 +2,7 @@ import { forwardRef, useEffect, useRef, useState } from "react";
 import "./Chat.css";
 import { useMessages } from "./useMessages";
 import { useSendMessage } from "./useSendMessages";
+import { useWaiting } from "./useWaiting";
 
 interface ChatProps {
   onBlur: () => void;
@@ -10,6 +11,7 @@ interface ChatProps {
 export const Chat = ({ onBlur }: ChatProps) => {
   const [collapsed, setCollapsed] = useState(true);
   const messages = useMessages();
+  const waiting = useWaiting();
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
@@ -52,14 +54,26 @@ export const Chat = ({ onBlur }: ChatProps) => {
     >
       <div className="chat-content">
         <div className="messages">
-          {[...messages].reverse().map((message, i) => (
-            <Message
-              key={i}
-              author={message.author}
-              content={message.content}
-              you={message.you}
-            />
-          ))}
+          {[
+            ...messages,
+            ...(waiting
+              ? [
+                  {
+                    author: "AI",
+                    content: "Thinking...",
+                  },
+                ]
+              : []),
+          ]
+            .reverse()
+            .map((message, i) => (
+              <Message
+                key={i}
+                author={message.author}
+                content={message.content}
+                you={message.you}
+              />
+            ))}
         </div>
         <ChatInput
           ref={inputRef}

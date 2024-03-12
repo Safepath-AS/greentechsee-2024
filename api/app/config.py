@@ -13,6 +13,10 @@ class Config:
     @property
     def database_url(self):
         return os.getenv("DATABASE_URL")
+    
+    @property
+    def openai_api_key(self):
+        return os.getenv("OPENAI_API_KEY")
 
 
 config = Config()
