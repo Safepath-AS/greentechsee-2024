@@ -10,8 +10,9 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
   return (
     <MapContainer
       ref={ref}
-      center={[51.505, -0.09]}
-      zoom={13}
+      // Middle of Norway
+      center={[63, 10.3951]}
+      zoom={6}
       style={{ height: "100vh" }}
       className="map"
     >
