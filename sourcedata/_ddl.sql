@@ -140,4 +140,46 @@ VALUES
     ('hospital', 1, 'rating', '4.5'),
     ('hospital', 2, 'beds', '980'),
     ('hospital', 2, 'rating', '4.2');
+
+-- Sample select with join
+WITH cte_attributes AS (
+	SELECT att.entity_id 
+		  ,att.attribute_name 
+		  ,att.attribute_value 
+	  FROM public."attributes" att
+	 WHERE att.entity_type = 'airport' -- FILTER attributes 'airport', 'hospital', 'sar_base', 'emergency_port', 'emergency_depot'
+)
+SELECT *
+  FROM public.airports a 
+  LEFT JOIN cte_attributes ca
+    ON a.id = ca.entity_id;
 */
+
+CREATE TABLE public.ship_locations (
+    id SERIAL PRIMARY KEY
+   ,mmsi		INT4
+   ,"type"		VARCHAR(50)
+   ,"timestamp"	timestamp
+   ,longitude	NUMERIC
+   ,latitude	NUMERIC
+   ,"index"		INT4
+);
+
+CREATE INDEX idx_ship_locations_mmsi
+	ON public.ship_locations (mmsi);
+
+CREATE INDEX idx_ship_locations_longitude
+	ON public.ship_locations (longitude);
+
+CREATE INDEX idx_ship_locations_latitude
+	ON public.ship_locations (latitude);
+
+CREATE INDEX idx_ship_locations_index
+	ON public.ship_locations ("index");
+
+CREATE INDEX idx_ship_locations_type
+	ON public.ship_locations ("type");
+
+SELECT *
+  FROM public.ship_locations sl;
+
