@@ -61,3 +61,46 @@ CREATE INDEX idx_sar_bases_longitude
 	
 CREATE INDEX idx_sar_bases_latitude
 	ON public.sar_bases (latitude);
+	
+
+--
+CREATE TABLE public.emergency_ports (
+	 id SERIAL PRIMARY KEY
+	,"name"			TEXT
+	,commune		TEXT
+	,longitude		NUMERIC
+	,latitude		NUMERIC
+);
+
+CREATE INDEX idx_emergency_ports_name
+	ON public.emergency_ports ("name");
+
+CREATE INDEX idx_emergency_ports_commune
+	ON public.emergency_ports (commune);
+	
+CREATE INDEX idx_emergency_ports_longitude
+	ON public.emergency_ports (longitude);
+	
+CREATE INDEX idx_emergency_ports_latitude
+	ON public.emergency_ports (latitude);
+	
+--
+CREATE TABLE public.emergency_depots (
+	 id SERIAL PRIMARY KEY
+	,"name"			TEXT
+	,commune		TEXT
+	,longitude		NUMERIC
+	,latitude		NUMERIC
+);
+
+CREATE INDEX idx_emergency_depots_name
+	ON public.emergency_depots ("name");
+
+CREATE INDEX idx_emergency_depots_commune
+	ON public.emergency_depots (commune);
+	
+CREATE INDEX idx_emergency_depots_longitude
+	ON public.emergency_depots (longitude);
+	
+CREATE INDEX idx_emergency_depots_latitude
+	ON public.emergency_depots (latitude);
