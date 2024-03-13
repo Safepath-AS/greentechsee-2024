@@ -1,9 +1,14 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef, useState } from "react";
-import { Popup as PopupType } from "leaflet";
-import { SarBase } from "./api";
+import { useRef } from "react";
+import L, { Popup as PopupType } from "leaflet";
+import { SarBase, useSarBases } from "./api";
 
+import iconFile from "./assets/helicopter.svg";
+const icon = new L.Icon({
+  iconUrl: iconFile,
+  iconSize: [24, 24],
+});
 export interface ClosestSarBaseResponse {
   type: "sarBase";
   sarBase: SarBase;
@@ -12,12 +17,11 @@ export interface ClosestSarBaseResponse {
 export const SarBaseMarkers = () => {
   const popupRef = useRef<PopupType>(null);
   const map = useMap();
-  const [sarBases, setSarBases] = useState<SarBase[]>([]);
+  const { sarBases } = useSarBases();
 
   useOnMessage((message) => {
     if (message.data?.type === "sarBase") {
       const sarBase = message.data.sarBase;
-      setSarBases((prev) => [...prev, sarBase]);
 
       map.flyTo([sarBase.latitude, sarBase.longitude], 13, {
         duration: 2,
@@ -30,10 +34,11 @@ export const SarBaseMarkers = () => {
 
   return (
     <>
-      {sarBases.map((sarBase) => (
+      {sarBases?.map((sarBase) => (
         <Marker
           key={sarBase.name}
           position={[sarBase.latitude, sarBase.longitude]}
+          icon={icon}
         >
           <Popup ref={popupRef}>{sarBase.name}</Popup>
         </Marker>
