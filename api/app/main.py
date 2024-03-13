@@ -4,7 +4,7 @@ from .utils import haversine
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from typing import Tuple, Type, List, Optional
+from typing import Type, List
 from sqlalchemy.orm import Query
 from sqlalchemy.ext.declarative import DeclarativeMeta
 from sqlalchemy import and_, or_
