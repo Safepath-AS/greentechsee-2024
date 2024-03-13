@@ -32,6 +32,7 @@ async def query(query: str, history: list[HistoryMessage] = []):
     '''Query for some data.'''
     if 'we are sinking' in query.lower():
         return {
+            'type': 'message',
             'author': 'AI',
             'content': 'Here is a relevant coordinate for you.',
             'data': {
@@ -44,9 +45,17 @@ async def query(query: str, history: list[HistoryMessage] = []):
         }
 
     response = await query_gpt(query, history)
+    if response["type"] == "function":
+        return {
+            'type': 'function',
+            'function': response['function'],
+            'arguments': response['arguments'],
+        }
+
     return {
+        'type': 'message',
         'author': 'AI',
-        'content': response,
+        'content': response['message'],
     }
 
 

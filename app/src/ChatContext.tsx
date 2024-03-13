@@ -1,16 +1,32 @@
 import { PropsWithChildren, createContext, useRef, useState } from "react";
 import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
-import { useSendQuery } from "./api";
+import {
+  getClosestAirport,
+  getClosestHospital,
+  getClosestSarBase,
+  getUserLocation,
+  useSendQuery,
+} from "./api";
+import { ClosestHospitalResponse } from "./HospitalMarkers";
+import { ClosestAirportResponse } from "./AirportMarkers";
+import { ClosestSarBaseResponse } from "./SarBaseMarkers";
+import { UserLocationResponse } from "./UserLocationMarker";
 
 export type MessageReceivedCallback = (
   message: Message
 ) => void | Promise<void>;
 
 export interface Message {
+  type: "message";
   author: string;
   content: string;
   you?: boolean;
-  data?: WhatAreYouSinkingAboutResponse;
+  data?:
+    | UserLocationResponse
+    | WhatAreYouSinkingAboutResponse
+    | ClosestHospitalResponse
+    | ClosestAirportResponse
+    | ClosestSarBaseResponse;
 }
 
 interface ChatContextData {
@@ -37,6 +53,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
   const [waiting, setWaiting] = useState(false);
   const [messages, setMessages] = useState<Message[]>([
     {
+      type: "message",
       author: "AI",
       content: "Hi there!",
     },
@@ -48,18 +65,95 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
   };
 
   const send = async (message: string) => {
-    addMessage({ author: "You", content: message, you: true });
+    addMessage({ type: "message", author: "You", content: message, you: true });
 
     setWaiting(true);
     try {
       const result = await sendQuery(message, messages);
       if (result) {
-        addMessage(result as Message);
+        if (result.type === "message") {
+          addMessage(result as Message);
+        } else if (result.type === "function") {
+          // '{"latitude":62.737235,"longitude":7.160731}'
+          const args = JSON.parse(result.arguments.replace(/'/g, '"'));
+
+          if (result.function === "get_user_location") {
+            const position = await getPosition();
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: "Here is your current location.",
+              data: {
+                type: "userLocation",
+                location: {
+                  latitude: position.latitude,
+                  longitude: position.longitude,
+                },
+              },
+            });
+          } else if (result.function === "get_closest_hospital") {
+            const position = await getPosition(args);
+
+            const hospital = await getClosestHospital(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest hospital is ${hospital.name} in ${hospital.commune}.`,
+              data: {
+                type: "hospital",
+                hospital: hospital,
+              },
+            });
+          } else if (result.function === "get_closest_airport") {
+            const position = await getPosition(args);
+
+            const airport = await getClosestAirport(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest airport is ${airport.name} in ${airport.commune}.`,
+              data: {
+                type: "airport",
+                airport: airport,
+              },
+            });
+          } else if (result.function === "get_closest_sar_base") {
+            const position = await getPosition(args);
+
+            const sarBase = await getClosestSarBase(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest search and rescue helicopter base is ${sarBase.name} in ${sarBase.commune}.`,
+              data: {
+                type: "sarBase",
+                sarBase: sarBase,
+              },
+            });
+          }
+        }
       } else {
-        addMessage({ author: "AI", content: "Failed, please try again." });
+        addMessage({
+          type: "message",
+          author: "AI",
+          content: "Failed, please try again.",
+        });
       }
     } catch (error) {
-      addMessage({ author: "AI", content: "Failed, please try again." });
+      addMessage({
+        type: "message",
+        author: "AI",
+        content: "Failed, please try again.",
+      });
       console.error(error);
     }
 
@@ -91,4 +185,28 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
       {children}
     </ChatContext.Provider>
   );
+};
+
+const getPosition = async (args?: {
+  latitude?: number;
+  longitude?: number;
+}) => {
+  // Empty arguments
+  let position: {
+    latitude: number;
+    longitude: number;
+  };
+  if (!args || Object.keys(args).length === 0) {
+    const geo = await getUserLocation();
+    position = {
+      latitude: geo.coords.latitude,
+      longitude: geo.coords.longitude,
+    };
+  } else {
+    position = {
+      latitude: args.latitude as number,
+      longitude: args.longitude as number,
+    };
+  }
+  return position;
 };

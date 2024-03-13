@@ -1,14 +1,14 @@
-import { forwardRef, useState } from "react";
-import { GeoLocator } from "./GeoLocator";
+import { forwardRef } from "react";
+import { UserLocationMarker } from "./UserLocationMarker";
 import "./Map.css";
-import { MapContainer, Marker, TileLayer } from "react-leaflet";
-import { GeoLocation } from "./GeoLocation";
+import { MapContainer, TileLayer } from "react-leaflet";
 import { Map as LeafletMap } from "leaflet";
 import { WhatAreYouSinkingAbout } from "./WhatAreYouSinkingAbout";
+import { HospitalMarkers } from "./HospitalMarkers";
+import { AirportMarkers } from "./AirportMarkers";
+import { SarBaseMarkers } from "./SarBaseMarkers";
 
 export const Map = forwardRef<LeafletMap>((_props, ref) => {
-  const [userLocation, setUserLocation] = useState<GeoLocation | undefined>();
-
   return (
     <MapContainer
       ref={ref}
@@ -22,11 +22,11 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <GeoLocator onLocationFound={setUserLocation} />
+      <UserLocationMarker />
+      <HospitalMarkers />
+      <AirportMarkers />
+      <SarBaseMarkers />
       <WhatAreYouSinkingAbout />
-      {userLocation && (
-        <Marker position={[userLocation.latitude, userLocation.longitude]} />
-      )}
     </MapContainer>
   );
 });
