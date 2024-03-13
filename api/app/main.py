@@ -158,17 +158,3 @@ def read_emergency_depots():
 def read_closest_emergency_depot(lat: float, lon: float):
     assert_db()
     return get_closest_entity(lat, lon, session.query(EmergencyDepot), EmergencyDepot)
-
-# WITH cte_attributes AS (
-# 	SELECT att.entity_id 
-# 		  ,att.attribute_name 
-# 		  ,att.attribute_value 
-# 	  FROM public."attributes" att
-# 	 WHERE att.entity_type = 'hospital' -- FILTER attributes 'airport', 'hospital', 'sar_base', 'emergency_port', 'emergency_depot'
-# )
-# SELECT *
-# 	FROM public.hospitals a 
-# 	LEFT JOIN cte_attributes ca
-# 		ON a.id = ca.entity_id
-# WHERE ca.attribute_name = 'helipad'
-# 	AND ca.attribute_value = 'true';
