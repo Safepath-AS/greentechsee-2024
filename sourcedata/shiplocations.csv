@@ -1,4 +1,4 @@
-,mmsi,type,timestamp,longitude,latitude,index
+,mmsi,type,ts,longitude,latitude,index
 0,257446000,tug,2024-03-12 16:24:35,5.312893,60.398823,0.0
 1,258828000,oilspill,2024-03-12 16:24:40,17.832935,69.591238,1.0
 2,257079200,coastguard,2024-03-12 16:24:41,13.909673,67.346702,2.0
