@@ -6,6 +6,7 @@ import {
   getClosestEmergencyPort,
   getClosestHospital,
   getClosestSarBase,
+  getClosestVessel,
   getUserLocation,
   useSendQuery,
 } from "./api";
@@ -16,6 +17,7 @@ import { UserLocationResponse } from "./UserLocationMarker";
 import { ClosestEmergencyPortResponse } from "./EmergencyPortMarkers";
 import { ClosestEmergencyDepotResponse } from "./EmergencyDepotMarkers";
 import { useTranslation } from "react-i18next";
+import { ClosestVesselResponse } from "./VesselMarkers";
 
 export type MessageReceivedCallback = (
   message: Message
@@ -28,7 +30,9 @@ export type MessageData =
   | ClosestAirportResponse
   | ClosestSarBaseResponse
   | ClosestEmergencyPortResponse
-  | ClosestEmergencyDepotResponse;
+  | ClosestEmergencyDepotResponse
+  | ClosestVesselResponse;
+
 export type MessageDataType = MessageData["type"];
 
 export type MessageContent =
@@ -244,6 +248,28 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               data: {
                 type: "emergencyDepot",
                 emergencyDepot: emergencyDepot,
+              },
+            });
+          } else if (result.function === "get_closest_vessel") {
+            const position = await getPosition(args);
+
+            const vessel = await getClosestVessel(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: {
+                t: "closest_vessel_response",
+                values: {
+                  mmsi: vessel.mmsi,
+                  type: vessel.type.trim(),
+                },
+              },
+              data: {
+                type: "vessel",
+                vessel: vessel,
               },
             });
           }

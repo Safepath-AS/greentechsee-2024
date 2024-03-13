@@ -10,6 +10,7 @@ import { SarBaseMarkers } from "./SarBaseMarkers";
 import { EmergencyPortMarkers } from "./EmergencyPortMarkers";
 import { EmergencyDepotMarkers } from "./EmergencyDepotMarkers";
 import MarkerClusterGroup from "react-leaflet-cluster";
+import { VesselMarkers } from "./VesselMarkers";
 
 export const Map = forwardRef<LeafletMap>((_props, ref) => {
   return (
@@ -32,6 +33,7 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
         <SarBaseMarkers />
         <EmergencyPortMarkers />
         <EmergencyDepotMarkers />
+        <VesselMarkers />
         <WhatAreYouSinkingAbout />
       </MarkerClusterGroup>
     </MapContainer>
