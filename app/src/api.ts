@@ -39,6 +39,7 @@ export interface Hospital {
   longitude: number;
   name: string;
   commune: string;
+  has_helipad: boolean;
 }
 
 export const useHospitals = () => {

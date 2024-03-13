@@ -45,6 +45,7 @@ export const HospitalMarkers = () => {
         >
           <Popup {...(selectedId === hospital.id && { ref: popupRef })}>
             {hospital.name}
+            {hospital.has_helipad ? " 🚁" : ""}
           </Popup>
         </Marker>
       ))}
