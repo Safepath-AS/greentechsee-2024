@@ -74,31 +74,6 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
       author: "AI",
       content: { t: "init", values: {} },
     },
-    {
-      type: "message",
-      author: "AI",
-      content: { t: "init", values: {} },
-    },
-    {
-      type: "message",
-      author: "AI",
-      content: { t: "type_a_message", values: {} },
-    },
-    {
-      type: "message",
-      author: "AI",
-      content: { t: "init", values: {} },
-    },
-    {
-      type: "message",
-      author: "AI",
-      content: { t: "init", values: {} },
-    },
-    {
-      type: "message",
-      author: "AI",
-      content: { t: "type_a_message", values: {} },
-    },
   ]);
 
   const addMessage = (message: Message) => {
