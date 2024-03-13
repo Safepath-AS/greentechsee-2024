@@ -130,6 +130,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
   ({ onFocus, onBlur }, ref) => {
     const [text, setText] = useState("");
     const send = useSendMessage();
+    const waiting = useWaiting();
 
     return (
       <div className={"chat-input"}>
@@ -143,7 +144,7 @@ const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
-              if (!text && e.key === "Enter") {
+              if (!text || waiting) {
                 return;
               }
 

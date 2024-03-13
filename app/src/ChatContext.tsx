@@ -2,6 +2,7 @@ import { PropsWithChildren, createContext, useRef, useState } from "react";
 import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
 import {
   getClosestAirport,
+  getClosestEmergencyPort,
   getClosestHospital,
   getClosestSarBase,
   getUserLocation,
@@ -11,22 +12,29 @@ import { ClosestHospitalResponse } from "./HospitalMarkers";
 import { ClosestAirportResponse } from "./AirportMarkers";
 import { ClosestSarBaseResponse } from "./SarBaseMarkers";
 import { UserLocationResponse } from "./UserLocationMarker";
+import { ClosestEmergencyPortResponse } from "./EmergencyPortMarkers";
+import { ClosestEmergencyDepotResponse } from "./EmergencyDepotMarkers";
 
 export type MessageReceivedCallback = (
   message: Message
 ) => void | Promise<void>;
+
+export type MessageData =
+  | UserLocationResponse
+  | WhatAreYouSinkingAboutResponse
+  | ClosestHospitalResponse
+  | ClosestAirportResponse
+  | ClosestSarBaseResponse
+  | ClosestEmergencyPortResponse
+  | ClosestEmergencyDepotResponse;
+export type MessageDataType = MessageData["type"];
 
 export interface Message {
   type: "message";
   author: string;
   content: string;
   you?: boolean;
-  data?:
-    | UserLocationResponse
-    | WhatAreYouSinkingAboutResponse
-    | ClosestHospitalResponse
-    | ClosestAirportResponse
-    | ClosestSarBaseResponse;
+  data?: MessageData;
 }
 
 interface ChatContextData {
@@ -34,7 +42,10 @@ interface ChatContextData {
   waiting: boolean;
   addMessage: (message: Message) => void;
   send: (message: string) => void;
-  subscribe: (callback: MessageReceivedCallback) => void;
+  subscribe: (
+    callback: MessageReceivedCallback,
+    type?: MessageDataType
+  ) => void;
   unsubscribe: (callback: MessageReceivedCallback) => void;
 }
 
@@ -139,6 +150,38 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
                 sarBase: sarBase,
               },
             });
+          } else if (result.function === "get_closest_emergency_port") {
+            const position = await getPosition(args);
+
+            const emergencyPort = await getClosestEmergencyPort(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest emergency port is ${emergencyPort.name} in ${emergencyPort.commune}.`,
+              data: {
+                type: "emergencyPort",
+                emergencyPort: emergencyPort,
+              },
+            });
+          } else if (result.function === "get_closest_emergency_depot") {
+            const position = await getPosition(args);
+
+            const emergencyDepot = await getClosestSarBase(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: `The closest emergency depot is ${emergencyDepot.name} in ${emergencyDepot.commune}.`,
+              data: {
+                type: "emergencyDepot",
+                emergencyDepot: emergencyDepot,
+              },
+            });
           }
         }
       } else {
@@ -160,21 +203,28 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
     setWaiting(false);
   };
 
-  const subscribersRef = useRef<Array<MessageReceivedCallback>>([]);
+  const subscribersRef = useRef<
+    Array<{ callback: MessageReceivedCallback; type?: MessageDataType }>
+  >([]);
 
-  const subscribe = (callback: MessageReceivedCallback) => {
-    subscribersRef.current.push(callback);
+  const subscribe = (
+    callback: MessageReceivedCallback,
+    type?: MessageDataType
+  ) => {
+    subscribersRef.current.push({ callback, type });
   };
 
   const unsubscribe = (callback: MessageReceivedCallback) => {
     subscribersRef.current = subscribersRef.current.filter(
-      (cb) => cb !== callback
+      ({ callback: cb }) => cb !== callback
     );
   };
 
   const notifySubscribers = (message: Message) => {
-    subscribersRef.current.forEach((subscriber) => {
-      subscriber(message);
+    subscribersRef.current.forEach(({ callback, type }) => {
+      if (!type || type === message.data?.type) {
+        callback(message);
+      }
     });
   };
 

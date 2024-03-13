@@ -17,7 +17,7 @@ function App() {
     <div className="main">
       <Chat
         onBlur={() => {
-          mapRef.current?.getContainer().focus();
+          // mapRef.current?.getContainer().focus();
         }}
       />
       <Map ref={mapRef} />

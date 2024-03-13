@@ -20,6 +20,8 @@ export const HospitalMarkers = () => {
   const map = useMap();
   const { hospitals } = useHospitals();
 
+  console.log("rendered hospitals");
+
   useOnMessage((message) => {
     if (message.data?.type === "hospital") {
       const hospital = message.data.hospital;
@@ -31,13 +33,13 @@ export const HospitalMarkers = () => {
         popupRef.current?.toggle();
       }, 1500);
     }
-  });
+  }, "hospital");
 
   return (
     <>
-      {hospitals?.map((hospital) => (
+      {hospitals?.map((hospital, index) => (
         <Marker
-          key={hospital.name}
+          key={index}
           position={[hospital.latitude, hospital.longitude]}
           icon={icon}
         >

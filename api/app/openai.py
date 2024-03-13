@@ -82,6 +82,66 @@ tools = [
   {
     "type": "function",
     "function": {
+      "name": "get_closest_sar_base",
+      "description": "Displays the closest searh and rescue helicopter base to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_closest_emergency_port",
+      "description": "Displays the closest emergency port to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_closest_emergency_depot",
+      "description": "Displays the closest emergency oilspill depot to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
       "name": "get_user_location",
       "description": "Displays the user's location. NOTE: Must only be used if the user explicitly asks to see their current location.",
     },
