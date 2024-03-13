@@ -13,8 +13,8 @@ from .config import config
 from .openai import query_gpt
 from .api_models import HistoryMessage
 
-from .database import session, Hospital, Airport, SarBase, EmergencyPort, EmergencyDepot, Attribute
-from .models import HospitalModel, AirportModel, PreparednessResourceModel, SarBaseModel, EmergencyPortModel, EmergencyDepotModel
+from .database import Vessel, session, Hospital, Airport, SarBase, EmergencyPort, EmergencyDepot, Attribute
+from .models import HospitalModel, AirportModel, PreparednessResourceModel, SarBaseModel, EmergencyPortModel, EmergencyDepotModel, VesselModel
 
 
 app = FastAPI()
@@ -183,3 +183,13 @@ def read_emergency_depots():
 def read_closest_emergency_depot(lat: float, lon: float):
     assert_db()
     return get_closest_entity(lat, lon, session.query(EmergencyDepot), EmergencyDepot)
+
+@app.get("/vessels", response_model=List[VesselModel], description="Get all vessels")
+def read_vessels():
+    assert_db()
+    return session.query(Vessel).all()
+
+@app.get("/vessels/closest", response_model=VesselModel, description="Get the closest vessel to a given location")
+def read_closest_vessel(lat: float, lon: float):
+    assert_db()
+    return get_closest_entity(lat, lon, session.query(Vessel), Vessel)

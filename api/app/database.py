@@ -19,4 +19,6 @@ EmergencyPort = Base.classes.emergency_ports if engine else None
 EmergencyDepot = Base.classes.emergency_depots if engine else None
 Attribute = Base.classes.attributes if engine else None
 
+Vessel = Base.classes.ship_locations if engine else None
+
 session = Session(engine) if engine else None

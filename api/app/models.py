@@ -24,3 +24,13 @@ class EmergencyPortModel(PreparednessResourceModel):
 
 class EmergencyDepotModel(PreparednessResourceModel):
     pass
+
+class VesselModel(BaseModel):
+    id: int
+    mmsi: int
+    type: str
+    latitude: float
+    longitude: float
+
+    class Config:
+        from_attributes = False
