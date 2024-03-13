@@ -97,7 +97,7 @@ export const Chat = ({ onBlur }: ChatProps) => {
         })}
       >
         {collapsed ? (
-          <span className="material-symbols-outlined">open_run</span>
+          <span className="material-symbols-outlined">expand_content</span>
         ) : (
           <span className="material-symbols-outlined">collapse_content</span>
         )}
