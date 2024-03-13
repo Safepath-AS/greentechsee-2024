@@ -66,7 +66,7 @@ async def query(query: str, history: list[HistoryMessage] = []):
         'content': response['message'],
     }
 
-def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta], needs_helipad: Optional[bool] = None):
+def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta], needs_helipad: bool = False):
     attributes = []
     if needs_helipad is not None and needs_helipad is True:
         helipad_subquery = session.query(entity.id).join(Attribute, entity.id == Attribute.entity_id).filter(and_(Attribute.attribute_name == 'helipad', Attribute.attribute_value == str(needs_helipad).lower())).subquery()
@@ -111,7 +111,7 @@ def read_hospitals():
 
 
 @app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
-def read_closest_hospital(lat: float, lon: float, needs_helipad: Optional[bool] = None):
+def read_closest_hospital(lat: float, lon: float, needs_helipad: bool = False):
     assert_db()
     return get_closest_entity(lat, lon, session.query(Hospital), Hospital, needs_helipad)
 
