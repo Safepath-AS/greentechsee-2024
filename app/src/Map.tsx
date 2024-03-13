@@ -25,7 +25,7 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <MarkerClusterGroup disableClusteringAtZoom={8}>
+      <MarkerClusterGroup disableClusteringAtZoom={8} chunkLoading>
         <UserLocationMarker />
         <HospitalMarkers />
         <AirportMarkers />

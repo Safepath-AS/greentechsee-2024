@@ -20,7 +20,7 @@ export const Chat = ({ onBlur }: ChatProps) => {
   useEffect(() => {
     const focus = (e: KeyboardEvent) => {
       // Focus
-      if ((collapsed && e.key.match(/^[a-zA-Z]$/)) || e.key === "Tab") {
+      if (e.key.match(/^[a-zA-Z]$/) || (e.key === "Tab" && collapsed)) {
         if (collapsed) {
           setCollapsed(false);
         }

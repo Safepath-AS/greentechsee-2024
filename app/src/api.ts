@@ -34,6 +34,7 @@ export const useSendQuery = () => {
 };
 
 export interface Hospital {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
@@ -52,11 +53,18 @@ export const useHospitals = () => {
   };
 };
 
-export const getClosestHospital = (latitude: number, longitude: number) => {
-  return get(`/hospitals/closest?lat=${latitude}&lon=${longitude}`);
+export const getClosestHospital = (
+  latitude: number,
+  longitude: number,
+  needs_helipad: boolean = false
+) => {
+  return get(
+    `/hospitals/closest?lat=${latitude}&lon=${longitude}&needs_helipad=${needs_helipad}`
+  );
 };
 
 export interface Airport {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
@@ -80,6 +88,7 @@ export const getClosestAirport = (latitude: number, longitude: number) => {
 };
 
 export interface SarBase {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
@@ -103,6 +112,7 @@ export const getClosestSarBase = (latitude: number, longitude: number) => {
 };
 
 export interface EmergencyPort {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;
@@ -129,6 +139,7 @@ export const getClosestEmergencyPort = (
 };
 
 export interface EmergencyDepot {
+  id: number;
   latitude: number;
   longitude: number;
   name: string;

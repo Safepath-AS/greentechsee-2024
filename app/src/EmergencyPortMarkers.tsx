@@ -1,6 +1,6 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { EmergencyPort, useEmergencyPorts } from "./api";
 
@@ -17,6 +17,7 @@ export interface ClosestEmergencyPortResponse {
 
 export const EmergencyPortMarkers = () => {
   const popupRef = useRef<PopupType>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
   const { emergencyPorts } = useEmergencyPorts();
 
@@ -26,21 +27,24 @@ export const EmergencyPortMarkers = () => {
       map.flyTo([emergencyPort.latitude, emergencyPort.longitude], 13, {
         duration: 2,
       });
+      setSelectedId(emergencyPort.id);
       setTimeout(() => {
         popupRef.current?.toggle();
-      }, 1500);
+      }, 3000);
     }
   }, "emergencyPort");
 
   return (
     <>
-      {emergencyPorts?.map((emergencyPort, index) => (
+      {emergencyPorts?.map((emergencyPort) => (
         <Marker
-          key={index}
+          key={emergencyPort.id}
           position={[emergencyPort.latitude, emergencyPort.longitude]}
           icon={icon}
         >
-          <Popup ref={popupRef}>{emergencyPort.name}</Popup>
+          <Popup {...(selectedId === emergencyPort.id && { ref: popupRef })}>
+            {emergencyPort.name}
+          </Popup>
         </Marker>
       ))}
     </>

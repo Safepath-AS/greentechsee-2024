@@ -1,6 +1,6 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { Airport, useAirports } from "./api";
 
@@ -17,6 +17,7 @@ export interface ClosestAirportResponse {
 
 export const AirportMarkers = () => {
   const popupRef = useRef<PopupType>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
   const { airports } = useAirports();
 
@@ -26,21 +27,24 @@ export const AirportMarkers = () => {
       map.flyTo([airport.latitude, airport.longitude], 13, {
         duration: 2,
       });
+      setSelectedId(airport.id);
       setTimeout(() => {
         popupRef.current?.toggle();
-      }, 1500);
+      }, 3000);
     }
   }, "airport");
 
   return (
     <>
-      {airports?.map((airport, index) => (
+      {airports?.map((airport) => (
         <Marker
-          key={index}
+          key={airport.id}
           position={[airport.latitude, airport.longitude]}
           icon={icon}
         >
-          <Popup ref={popupRef}>{airport.name}</Popup>
+          <Popup {...(selectedId === airport.id && { ref: popupRef })}>
+            {airport.name}
+          </Popup>
         </Marker>
       ))}
     </>

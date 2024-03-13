@@ -1,6 +1,6 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { Hospital, useHospitals } from "./api";
 
@@ -17,6 +17,7 @@ export interface ClosestHospitalResponse {
 
 export const HospitalMarkers = () => {
   const popupRef = useRef<PopupType>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
   const { hospitals } = useHospitals();
 
@@ -27,21 +28,24 @@ export const HospitalMarkers = () => {
       map.flyTo([hospital.latitude, hospital.longitude], 13, {
         duration: 2,
       });
+      setSelectedId(hospital.id);
       setTimeout(() => {
         popupRef.current?.toggle();
-      }, 1500);
+      }, 3000);
     }
   }, "hospital");
 
   return (
     <>
-      {hospitals?.map((hospital, index) => (
+      {hospitals?.map((hospital) => (
         <Marker
-          key={index}
+          key={hospital.id}
           position={[hospital.latitude, hospital.longitude]}
           icon={icon}
         >
-          <Popup ref={popupRef}>{hospital.name}</Popup>
+          <Popup {...(selectedId === hospital.id && { ref: popupRef })}>
+            {hospital.name}
+          </Popup>
         </Marker>
       ))}
     </>

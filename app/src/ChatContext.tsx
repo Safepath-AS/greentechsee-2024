@@ -126,10 +126,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             });
           } else if (result.function === "get_closest_hospital") {
             const position = await getPosition(args);
+            console.log(args);
+            const needsHelipad = !!args.needs_helipad;
 
             const hospital = await getClosestHospital(
               position.latitude,
-              position.longitude
+              position.longitude,
+              needsHelipad
             );
             addMessage({
               type: "message",
@@ -137,8 +140,9 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               content: {
                 t: "closest_hospital_response",
                 values: {
-                  name: hospital.name,
-                  commune: hospital.commune,
+                  name: hospital.name.trim(),
+                  commune: hospital.commune.trim(),
+                  helipad_t: needsHelipad ? "with_helipad" : "without_helipad",
                 },
               },
               data: {
@@ -159,8 +163,8 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               content: {
                 t: "closest_airport_response",
                 values: {
-                  name: airport.name,
-                  commune: airport.commune,
+                  name: airport.name.trim(),
+                  commune: airport.commune.trim(),
                 },
               },
               data: {
@@ -181,8 +185,8 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               content: {
                 t: "closest_sar_base_response",
                 values: {
-                  name: sarBase.name,
-                  commune: sarBase.commune,
+                  name: sarBase.name.trim(),
+                  commune: sarBase.commune.trim(),
                 },
               },
               data: {
@@ -203,8 +207,8 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               content: {
                 t: "closest_emergency_port_response",
                 values: {
-                  name: emergencyPort.name,
-                  commune: emergencyPort.commune,
+                  name: emergencyPort.name.trim(),
+                  commune: emergencyPort.commune.trim(),
                 },
               },
               data: {
@@ -225,8 +229,8 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
               content: {
                 t: "closest_emergency_depot_response",
                 values: {
-                  name: emergencyDepot.name,
-                  commune: emergencyDepot.commune,
+                  name: emergencyDepot.name.trim(),
+                  commune: emergencyDepot.commune.trim(),
                 },
               },
               data: {
@@ -298,7 +302,7 @@ const getPosition = async (args?: {
     latitude: number;
     longitude: number;
   };
-  if (!args || Object.keys(args).length === 0) {
+  if (!args || args.latitude === undefined || args.longitude === undefined) {
     const geo = await getUserLocation();
     position = {
       latitude: geo.coords.latitude,
