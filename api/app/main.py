@@ -1,18 +1,21 @@
 import random
+
+from pydantic import BaseModel
 from .utils import haversine
 
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
-from typing import Type, List
+from typing import Tuple, Type, List, Optional
 from sqlalchemy.orm import Query
 from sqlalchemy.ext.declarative import DeclarativeMeta
+from sqlalchemy import and_, or_
 
 from .config import config
 from .openai import query_gpt
 from .api_models import HistoryMessage
 
-from .database import session, Hospital, Airport, SarBase, EmergencyPort, EmergencyDepot
+from .database import session, Hospital, Airport, SarBase, EmergencyPort, EmergencyDepot, Attribute
 from .models import HospitalModel, AirportModel, SarBaseModel, EmergencyPortModel, EmergencyDepotModel
 
 
@@ -66,8 +69,22 @@ async def query(query: str, history: list[HistoryMessage] = []):
     }
 
 
-def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta]):
-    entities = query.all()
+def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta], has_helipad: Optional[bool] = None):
+    attributes = []
+    if has_helipad is not None:
+        helipad_subquery = session.query(entity.id).join(Attribute, entity.id == Attribute.entity_id).filter(and_(Attribute.attribute_name == 'helipad', Attribute.attribute_value == str(has_helipad).lower())).subquery()
+        attributes.append(helipad_subquery)
+
+    if attributes:
+        entities = session.query(entity).filter(entity.id.in_(attributes[0]))
+        for attribute in attributes[1:]:
+            entities = entities.filter(entity.id.in_(attribute))
+        entities = entities.all()
+        if not entities:
+            raise HTTPException(status_code=404, detail="No entity found with the requested attributes")
+    else:
+        entities = query.all()
+
     min_distance = float('inf')
     closest_entity = None
     for entity in entities:
@@ -90,9 +107,9 @@ def read_hospitals():
 
 
 @app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
-def read_closest_hospital(lat: float, lon: float):
+def read_closest_hospital(lat: float, lon: float, has_helipad: Optional[bool] = None):
     assert_db()
-    return get_closest_entity(lat, lon, session.query(Hospital), Hospital)
+    return get_closest_entity(lat, lon, session.query(Hospital), Hospital, has_helipad)
 
 
 @app.get("/airports", response_model=List[AirportModel], description="Get all airports")
@@ -141,3 +158,17 @@ def read_emergency_depots():
 def read_closest_emergency_depot(lat: float, lon: float):
     assert_db()
     return get_closest_entity(lat, lon, session.query(EmergencyDepot), EmergencyDepot)
+
+# WITH cte_attributes AS (
+# 	SELECT att.entity_id 
+# 		  ,att.attribute_name 
+# 		  ,att.attribute_value 
+# 	  FROM public."attributes" att
+# 	 WHERE att.entity_type = 'hospital' -- FILTER attributes 'airport', 'hospital', 'sar_base', 'emergency_port', 'emergency_depot'
+# )
+# SELECT *
+# 	FROM public.hospitals a 
+# 	LEFT JOIN cte_attributes ca
+# 		ON a.id = ca.entity_id
+# WHERE ca.attribute_name = 'helipad'
+# 	AND ca.attribute_value = 'true';
