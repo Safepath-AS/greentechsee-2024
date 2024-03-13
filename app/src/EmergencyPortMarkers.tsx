@@ -4,7 +4,7 @@ import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { EmergencyPort, useEmergencyPorts } from "./api";
 
-import iconFile from "./assets/boat.svg";
+import iconFile from "./assets/anchor.svg";
 const icon = new L.Icon({
   iconUrl: iconFile,
   iconSize: [24, 24],
