@@ -104,12 +104,20 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           const args = JSON.parse(result.arguments.replace(/'/g, '"'));
 
           if (result.function === "change_language") {
-            i18n.changeLanguage(args.language);
-            addMessage({
-              type: "message",
-              author: "AI",
-              content: { t: "language_changed", values: {} },
-            });
+            if (!["en", "no"].includes(args.language)) {
+              addMessage({
+                type: "message",
+                author: "AI",
+                content: { t: "language_not_supported", values: {} },
+              });
+            } else {
+              i18n.changeLanguage(args.language);
+              addMessage({
+                type: "message",
+                author: "AI",
+                content: { t: "language_changed", values: {} },
+              });
+            }
           } else if (result.function === "get_user_location") {
             const position = await getPosition();
             addMessage({
