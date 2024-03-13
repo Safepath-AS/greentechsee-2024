@@ -9,7 +9,7 @@ export interface ClosestAirportResponse {
   airport: Airport;
 }
 
-export const ClosestAirport = () => {
+export const AirportMarkers = () => {
   const popupRef = useRef<PopupType>(null);
   const map = useMap();
   const [airports, setAirports] = useState<Airport[]>([]);

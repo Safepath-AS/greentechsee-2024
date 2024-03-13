@@ -9,7 +9,7 @@ export interface ClosestSarBaseResponse {
   sarBase: SarBase;
 }
 
-export const ClosestSarBase = () => {
+export const SarBaseMarkers = () => {
   const popupRef = useRef<PopupType>(null);
   const map = useMap();
   const [sarBases, setSarBases] = useState<SarBase[]>([]);

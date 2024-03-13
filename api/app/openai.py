@@ -36,6 +36,13 @@ async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
       {
         "type": "function",
         "function": {
+          "name": "get_user_location",
+          "description": "Get the user's location. This function should be called when the user asks for their own location.",
+        },
+      },
+      {
+        "type": "function",
+        "function": {
           "name": "get_closest_hospital",
           "description": "Get the closest hospital to a given location. Omit the latitude and longitude if the user asks for their own position.",
           "parameters": {

@@ -9,7 +9,7 @@ export interface ClosestHospitalResponse {
   hospital: Hospital;
 }
 
-export const ClosestHospital = () => {
+export const HospitalMarkers = () => {
   const popupRef = useRef<PopupType>(null);
   const map = useMap();
   const [hospitals, setHospitals] = useState<Hospital[]>([]);

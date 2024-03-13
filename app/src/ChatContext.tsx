@@ -7,9 +7,10 @@ import {
   getUserLocation,
   useSendQuery,
 } from "./api";
-import { ClosestHospitalResponse } from "./ClosestHospital";
-import { ClosestAirportResponse } from "./ClosestAirport";
-import { ClosestSarBaseResponse } from "./ClosestSarBase";
+import { ClosestHospitalResponse } from "./HospitalMarkers";
+import { ClosestAirportResponse } from "./AirportMarkers";
+import { ClosestSarBaseResponse } from "./SarBaseMarkers";
+import { UserLocationResponse } from "./UserLocationMarker";
 
 export type MessageReceivedCallback = (
   message: Message
@@ -21,6 +22,7 @@ export interface Message {
   content: string;
   you?: boolean;
   data?:
+    | UserLocationResponse
     | WhatAreYouSinkingAboutResponse
     | ClosestHospitalResponse
     | ClosestAirportResponse
@@ -75,7 +77,21 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           // '{"latitude":62.737235,"longitude":7.160731}'
           const args = JSON.parse(result.arguments.replace(/'/g, '"'));
 
-          if (result.function === "get_closest_hospital") {
+          if (result.function === "get_user_location") {
+            const position = await getPosition();
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: "Here is your current location.",
+              data: {
+                type: "userLocation",
+                location: {
+                  latitude: position.latitude,
+                  longitude: position.longitude,
+                },
+              },
+            });
+          } else if (result.function === "get_closest_hospital") {
             const position = await getPosition(args);
 
             const hospital = await getClosestHospital(
@@ -171,13 +187,16 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
   );
 };
 
-const getPosition = async (args: { latitude?: number; longitude?: number }) => {
+const getPosition = async (args?: {
+  latitude?: number;
+  longitude?: number;
+}) => {
   // Empty arguments
   let position: {
     latitude: number;
     longitude: number;
   };
-  if (Object.keys(args).length === 0) {
+  if (!args || Object.keys(args).length === 0) {
     const geo = await getUserLocation();
     position = {
       latitude: geo.coords.latitude,
