@@ -166,20 +166,6 @@ export const getClosestEmergencyDepot = (
   return get(`/emergency_depots/closest?lat=${latitude}&lon=${longitude}`);
 };
 
-export const useRandomNumber = () => {
-  const result = useQuery({
-    queryKey: ["randomNumber"],
-    queryFn: async () => await get("/random"),
-  });
-
-  const randomNumber = result.data as number | undefined;
-
-  return {
-    randomNumber,
-    ...result,
-  };
-};
-
 export const getUserLocation = () => {
   return new Promise<GeolocationPosition>((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject);

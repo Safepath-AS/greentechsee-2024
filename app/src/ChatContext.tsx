@@ -2,6 +2,7 @@ import { PropsWithChildren, createContext, useRef, useState } from "react";
 import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
 import {
   getClosestAirport,
+  getClosestEmergencyDepot,
   getClosestEmergencyPort,
   getClosestHospital,
   getClosestSarBase,
@@ -226,7 +227,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           } else if (result.function === "get_closest_emergency_depot") {
             const position = await getPosition(args);
 
-            const emergencyDepot = await getClosestSarBase(
+            const emergencyDepot = await getClosestEmergencyDepot(
               position.latitude,
               position.longitude
             );
