@@ -187,7 +187,7 @@ def read_closest_emergency_depot(lat: float, lon: float):
 @app.get("/vessels", response_model=List[VesselModel], description="Get all vessels")
 def read_vessels():
     assert_db()
-    return session.query(Vessel).all()
+    return session.query(Vessel).distinct(Vessel.mmsi).all()
 
 @app.get("/vessels/closest", response_model=VesselModel, description="Get the closest vessel to a given location")
 def read_closest_vessel(lat: float, lon: float):
