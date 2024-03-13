@@ -139,13 +139,13 @@ tools = [
       },
     },
   },
-  {
-    "type": "function",
-    "function": {
-      "name": "get_user_location",
-      "description": "Displays the user's location. NOTE: Must only be used if the user explicitly asks to see their current location.",
-    },
-  },
+  # {
+  #   "type": "function",
+  #   "function": {
+  #     "name": "get_user_location",
+  #     "description": "Displays the user's location. NOTE: Must only be used if the user explicitly asks to see their current location.",
+  #   },
+  # },
 ]
 
 async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
