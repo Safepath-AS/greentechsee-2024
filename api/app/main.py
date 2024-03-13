@@ -107,7 +107,28 @@ def assert_db():
 @app.get("/hospitals", response_model=List[HospitalModel], description="Get all hospitals")
 def read_hospitals():
     assert_db()
-    return session.query(Hospital).all()
+    hospitals = session.query(
+        Hospital,
+        (session.query(Attribute)
+        .filter(Attribute.entity_id == Hospital.id, Attribute.attribute_name == 'helipad')
+        .exists()
+        .label('has_helipad'))
+    ).all()
+
+    # Convert the tuples to HospitalModel instances with the has_helipad attribute set
+    hospital_models = []
+    for hospital, has_helipad in hospitals:
+        hospital_model = HospitalModel(
+            id=hospital.id,
+            name=hospital.name,
+            commune=hospital.commune,
+            latitude=hospital.latitude,
+            longitude=hospital.longitude,
+            has_helipad=has_helipad
+        )
+        hospital_models.append(hospital_model)
+
+    return hospital_models
 
 
 @app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
