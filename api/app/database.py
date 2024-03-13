@@ -16,5 +16,6 @@ Airport = Base.classes.airports
 SarBase = Base.classes.sar_bases
 EmergencyPort = Base.classes.emergency_ports
 EmergencyDepot = Base.classes.emergency_depots
+Attribute = Base.classes.attributes
 
 session = Session(engine)
