@@ -32,6 +32,7 @@ const resources = {
       helipad: "Helipad",
       yes: "Yes",
       no: "No",
+      language_not_supported: "Sorry, that language is not supported.",
     },
   },
   no: {
@@ -51,9 +52,11 @@ const resources = {
         "Nærmeste nødhavn er {{name}} i {{commune}}.",
       closest_emergency_depot_response:
         "Nærmeste nøddepot er {{name}} i {{commune}}.",
+      automated: "system",
       helipad: "Heliport",
       yes: "Ja",
       no: "Nei",
+      language_not_supported: "Beklager, det språket støttes ikke.",
     },
   },
 };
@@ -61,6 +64,7 @@ const resources = {
 i18n.use(initReactI18next).init({
   resources,
   lng: "en",
+  fallbackLng: "en",
   interpolation: {
     escapeValue: false,
   },
