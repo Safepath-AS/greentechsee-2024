@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from typing import Type, List
 from sqlalchemy.orm import Query
 from sqlalchemy.ext.declarative import DeclarativeMeta
-from sqlalchemy import and_, or_
+from sqlalchemy import and_
 
 from .config import config
 from .openai import query_gpt
