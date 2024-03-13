@@ -142,7 +142,6 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
                 values: {
                   name: hospital.name.trim(),
                   commune: hospital.commune.trim(),
-                  helipad_t: needsHelipad ? "with_helipad" : "without_helipad",
                 },
               },
               data: {
