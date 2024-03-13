@@ -40,6 +40,18 @@ export interface Hospital {
   commune: string;
 }
 
+export const useHospitals = () => {
+  const result = useQuery({
+    queryKey: ["hospitals"],
+    queryFn: async () => await get("/hospitals"),
+  });
+  const hospitals = result.data as Hospital[] | undefined;
+  return {
+    hospitals,
+    ...result,
+  };
+};
+
 export const getClosestHospital = (latitude: number, longitude: number) => {
   return get(`/hospitals/closest?lat=${latitude}&lon=${longitude}`);
 };
@@ -51,6 +63,18 @@ export interface Airport {
   commune: string;
 }
 
+export const useAirports = () => {
+  const result = useQuery({
+    queryKey: ["airports"],
+    queryFn: async () => await get("/airports"),
+  });
+  const airports = result.data as Airport[] | undefined;
+  return {
+    airports,
+    ...result,
+  };
+};
+
 export const getClosestAirport = (latitude: number, longitude: number) => {
   return get(`/airports/closest?lat=${latitude}&lon=${longitude}`);
 };
@@ -61,6 +85,18 @@ export interface SarBase {
   name: string;
   commune: string;
 }
+
+export const useSarBases = () => {
+  const result = useQuery({
+    queryKey: ["sarBases"],
+    queryFn: async () => await get("/sar_bases"),
+  });
+  const airports = result.data as SarBase[] | undefined;
+  return {
+    sarBases: airports,
+    ...result,
+  };
+};
 
 export const getClosestSarBase = (latitude: number, longitude: number) => {
   return get(`/sar_bases/closest?lat=${latitude}&lon=${longitude}`);

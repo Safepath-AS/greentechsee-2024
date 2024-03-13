@@ -1,5 +1,3 @@
-from pprint import pprint
-
 from openai import AsyncOpenAI
 
 from .config import config
