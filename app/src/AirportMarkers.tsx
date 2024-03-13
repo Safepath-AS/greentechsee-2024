@@ -43,7 +43,7 @@ export const AirportMarkers = () => {
           icon={icon}
         >
           <Popup {...(selectedId === airport.id && { ref: popupRef })}>
-            {airport.name}
+            ✈️ <b>{airport.name}</b>
           </Popup>
         </Marker>
       ))}

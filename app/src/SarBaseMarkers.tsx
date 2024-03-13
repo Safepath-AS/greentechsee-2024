@@ -43,7 +43,7 @@ export const SarBaseMarkers = () => {
           icon={icon}
         >
           <Popup {...(selectedId === sarBase.id && { ref: popupRef })}>
-            {sarBase.name}
+            🚁 <b>{sarBase.name}</b>
           </Popup>
         </Marker>
       ))}

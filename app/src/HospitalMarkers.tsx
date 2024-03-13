@@ -5,6 +5,7 @@ import L, { Popup as PopupType } from "leaflet";
 import { Hospital, useHospitals } from "./api";
 
 import iconFile from "./assets/hospital.svg";
+import { useTranslation } from "react-i18next";
 const icon = new L.Icon({
   iconUrl: iconFile,
   iconSize: [24, 24],
@@ -16,6 +17,7 @@ export interface ClosestHospitalResponse {
 }
 
 export const HospitalMarkers = () => {
+  const { t } = useTranslation();
   const popupRef = useRef<PopupType>(null);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
@@ -44,8 +46,9 @@ export const HospitalMarkers = () => {
           icon={icon}
         >
           <Popup {...(selectedId === hospital.id && { ref: popupRef })}>
-            {hospital.name}
-            {hospital.has_helipad ? " 🚁" : ""}
+            🏥 <b>{hospital.name}</b>
+            <br />
+            {t("helipad")}: {hospital.has_helipad ? `🚁 ${t("yes")}` : t("no")}
           </Popup>
         </Marker>
       ))}

@@ -29,6 +29,9 @@ const resources = {
       closest_emergency_depot_response:
         "The closest emergency depot is {{name}} in {{commune}}.",
       automated: "system",
+      helipad: "Helipad",
+      yes: "Yes",
+      no: "No",
     },
   },
   no: {
@@ -48,7 +51,9 @@ const resources = {
         "Nærmeste nødhavn er {{name}} i {{commune}}.",
       closest_emergency_depot_response:
         "Nærmeste nøddepot er {{name}} i {{commune}}.",
-      automated: "system",
+      helipad: "Heliport",
+      yes: "Ja",
+      no: "Nei",
     },
   },
 };
