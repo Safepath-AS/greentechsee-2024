@@ -1,6 +1,6 @@
-# Shellsea
+# Shellsea AI Copilot
 
-_Terje har visjoner._
+https://greentechsee.safepath.no/ (ca. 8 USD gjenstår med bruk av AI chat)
 
 ## Medlemmer
 
