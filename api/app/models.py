@@ -18,3 +18,9 @@ class AirportModel(PreparednessResourceModel):
 
 class SarBaseModel(PreparednessResourceModel):
     pass
+
+class EmergencyPortModel(PreparednessResourceModel):
+    pass
+
+class EmergencyDepotModel(PreparednessResourceModel):
+    pass

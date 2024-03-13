@@ -14,5 +14,7 @@ Base.prepare(engine, reflect=True)
 Hospital = Base.classes.hospitals
 Airport = Base.classes.airports
 SarBase = Base.classes.sar_bases
+EmergencyPort = Base.classes.emergency_ports
+EmergencyDepot = Base.classes.emergency_depots
 
 session = Session(engine)
