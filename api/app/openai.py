@@ -35,9 +35,9 @@ tools = [
             "type": "number",
             "description": "The longitude of the user's location.",
           },
-          "has_helipad": {
+          "needs_helipad": {
             "type": "boolean",
-            "description": "Whether the hospital has a helipad. Can be omitted to ignore this filter.",
+            "description": "Set to true if the hospital must have a helipad.",
           },
         },
       },

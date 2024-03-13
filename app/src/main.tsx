@@ -39,7 +39,8 @@ const resources = {
       error: "Failed, please try again.",
       language_changed: "OK, jeg har endret språk.",
       current_location_response: "Her er din nåværende posisjon.",
-      closest_hospital_response: "Nærmeste sykehus er {{name}} i {{commune}}.",
+      closest_hospital_response:
+        "Nærmeste sykehus $t({{helipad_t}}) er {{name}} i {{commune}}.",
       closest_airport_response: "Nærmeste flyplass er {{name}} i {{commune}}.",
       closest_sar_base_response:
         "Nærmeste søk- og redningshelikopterbase er {{name}} i {{commune}}.",

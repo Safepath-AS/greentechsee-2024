@@ -1,6 +1,6 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { SarBase, useSarBases } from "./api";
 
@@ -16,6 +16,7 @@ export interface ClosestSarBaseResponse {
 
 export const SarBaseMarkers = () => {
   const popupRef = useRef<PopupType>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
   const { sarBases } = useSarBases();
 
@@ -26,21 +27,24 @@ export const SarBaseMarkers = () => {
       map.flyTo([sarBase.latitude, sarBase.longitude], 13, {
         duration: 2,
       });
+      setSelectedId(sarBase.id);
       setTimeout(() => {
         popupRef.current?.toggle();
-      }, 1500);
+      }, 3000);
     }
   }, "sarBase");
 
   return (
     <>
-      {sarBases?.map((sarBase, index) => (
+      {sarBases?.map((sarBase) => (
         <Marker
-          key={index}
+          key={sarBase.id}
           position={[sarBase.latitude, sarBase.longitude]}
           icon={icon}
         >
-          <Popup ref={popupRef}>{sarBase.name}</Popup>
+          <Popup {...(selectedId === sarBase.id && { ref: popupRef })}>
+            {sarBase.name}
+          </Popup>
         </Marker>
       ))}
     </>

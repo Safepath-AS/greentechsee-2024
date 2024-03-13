@@ -1,6 +1,6 @@
 import { Marker, Popup, useMap } from "react-leaflet";
 import { useOnMessage } from "./useOnMessage";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import L, { Popup as PopupType } from "leaflet";
 import { EmergencyDepot, useEmergencyDepots } from "./api";
 
@@ -17,6 +17,7 @@ export interface ClosestEmergencyDepotResponse {
 
 export const EmergencyDepotMarkers = () => {
   const popupRef = useRef<PopupType>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const map = useMap();
   const { emergencyDepots } = useEmergencyDepots();
 
@@ -26,21 +27,24 @@ export const EmergencyDepotMarkers = () => {
       map.flyTo([emergencyDepot.latitude, emergencyDepot.longitude], 13, {
         duration: 2,
       });
+      setSelectedId(emergencyDepot.id);
       setTimeout(() => {
         popupRef.current?.toggle();
-      }, 1500);
+      }, 3000);
     }
   }, "emergencyDepot");
 
   return (
     <>
-      {emergencyDepots?.map((emergencyDepot, index) => (
+      {emergencyDepots?.map((emergencyDepot) => (
         <Marker
-          key={index}
+          key={emergencyDepot.id}
           position={[emergencyDepot.latitude, emergencyDepot.longitude]}
           icon={icon}
         >
-          <Popup ref={popupRef}>{emergencyDepot.name}</Popup>
+          <Popup {...(selectedId === emergencyDepot.id && { ref: popupRef })}>
+            {emergencyDepot.name}
+          </Popup>
         </Marker>
       ))}
     </>
