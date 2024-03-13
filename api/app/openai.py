@@ -149,6 +149,30 @@ tools = [
   {
     "type": "function",
     "function": {
+      "name": "get_closest_vessel",
+      "description": "Displays the closest vessel to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+          "needs_helipad": {
+            "type": "boolean",
+            "description": "Set to true if the hospital must have a helipad.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
       "name": "change_language",
       "description": "Let's the user change language. Guess the closest language if the user's language is not supported.",
       "parameters": {

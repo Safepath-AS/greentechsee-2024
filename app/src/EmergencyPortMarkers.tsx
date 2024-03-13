@@ -43,7 +43,7 @@ export const EmergencyPortMarkers = () => {
           icon={icon}
         >
           <Popup {...(selectedId === emergencyPort.id && { ref: popupRef })}>
-            🚢 <b>{emergencyPort.name}</b>
+            ⚓ <b>{emergencyPort.name}</b>
           </Popup>
         </Marker>
       ))}

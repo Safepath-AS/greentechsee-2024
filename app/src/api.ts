@@ -166,6 +166,30 @@ export const getClosestEmergencyDepot = (
   return get(`/emergency_depots/closest?lat=${latitude}&lon=${longitude}`);
 };
 
+export interface Vessel {
+  id: number;
+  latitude: number;
+  longitude: number;
+  mmsi: number;
+  type: string;
+}
+
+export const useVessels = () => {
+  const result = useQuery({
+    queryKey: ["vessels"],
+    queryFn: async () => await get("/vessels"),
+  });
+  const vessels = result.data as Vessel[] | undefined;
+  return {
+    vessels,
+    ...result,
+  };
+};
+
+export const getClosestVessel = (latitude: number, longitude: number) => {
+  return get(`/vessels/closest?lat=${latitude}&lon=${longitude}`);
+};
+
 export const getUserLocation = () => {
   return new Promise<GeolocationPosition>((resolve, reject) => {
     navigator.geolocation.getCurrentPosition(resolve, reject);
