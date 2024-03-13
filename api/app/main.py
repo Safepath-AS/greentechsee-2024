@@ -45,6 +45,13 @@ async def query(query: str, history: list[HistoryMessage] = []):
         }
 
     response = await query_gpt(query, history)
+    if not response:
+        return {
+            'type': 'message',
+            'author': 'AI',
+            'content': 'Sorry, I cannot respond at the moment.',
+        }
+
     if response["type"] == "function":
         return {
             'type': 'function',
@@ -59,10 +66,6 @@ async def query(query: str, history: list[HistoryMessage] = []):
     }
 
 
-@app.get("/random")
-def read_random():
-    return random.randint(0, 100)
-
 def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta]):
     entities = query.all()
     min_distance = float('inf')
@@ -73,6 +76,7 @@ def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[Declar
             min_distance = distance
             closest_entity = entity
     return closest_entity
+
 
 @app.get("/hospitals", response_model=List[HospitalModel], description="Get all hospitals")
 def read_hospitals():
@@ -103,17 +107,21 @@ def read_sar_bases():
 def read_closest_sar_base(lat: float, lon: float):
     return get_closest_entity(lat, lon, session.query(SarBase), SarBase)
 
+
 @app.get("/emergency_ports", response_model=List[EmergencyPortModel], description="Get all emergency ports")
 def read_emergency_ports():
     return session.query(EmergencyPort).all()
+
 
 @app.get("/emergency_ports/closest", response_model=EmergencyPortModel, description="Get the closest emergency port to a given location")
 def read_closest_emergency_port(lat: float, lon: float):
     return get_closest_entity(lat, lon, session.query(EmergencyPort), EmergencyPort)
 
+
 @app.get("/emergency_depots", response_model=List[EmergencyDepotModel], description="Get all emergency depots")
 def read_emergency_depots():
     return session.query(EmergencyDepot).all()
+
 
 @app.get("/emergency_depots/closest", response_model=EmergencyDepotModel, description="Get the closest emergency depot to a given location")
 def read_closest_emergency_depot(lat: float, lon: float):

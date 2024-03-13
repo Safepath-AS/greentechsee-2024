@@ -7,7 +7,7 @@ from .api_models import HistoryMessage
 
 client = AsyncOpenAI(
   api_key=config.openai_api_key,
-)
+) if config.openai_api_key else None
 
 
 system = '''
@@ -148,8 +148,11 @@ tools = [
   # },
 ]
 
-async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
+async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str | None:
   '''Query GPT for a response.'''
+  if not client:
+    return None
+
   messages = [
     {
       "role": "system",
