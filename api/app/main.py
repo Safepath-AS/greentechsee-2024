@@ -78,51 +78,66 @@ def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[Declar
     return closest_entity
 
 
+def assert_db():
+    if not session:
+        raise ValueError("Database not available")
+
+
 @app.get("/hospitals", response_model=List[HospitalModel], description="Get all hospitals")
 def read_hospitals():
+    assert_db()
     return session.query(Hospital).all()
 
 
 @app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
 def read_closest_hospital(lat: float, lon: float):
+    assert_db()
     return get_closest_entity(lat, lon, session.query(Hospital), Hospital)
 
 
 @app.get("/airports", response_model=List[AirportModel], description="Get all airports")
 def read_airports():
+    assert_db()
     return session.query(Airport).all()
 
 
 @app.get("/airports/closest", response_model=AirportModel, description="Get the closest airport to a given location")
 def read_closest_airport(lat: float, lon: float):
+    assert_db()
     return get_closest_entity(lat, lon, session.query(Airport), Airport)
 
 
 @app.get("/sar_bases", response_model=List[SarBaseModel], description="Get all Sar bases")
 def read_sar_bases():
+    assert_db()
     return session.query(SarBase).all()
 
 
 @app.get("/sar_bases/closest", response_model=SarBaseModel, description="Get the closest Sar base to a given location")
 def read_closest_sar_base(lat: float, lon: float):
+    assert_db()
     return get_closest_entity(lat, lon, session.query(SarBase), SarBase)
 
 
 @app.get("/emergency_ports", response_model=List[EmergencyPortModel], description="Get all emergency ports")
 def read_emergency_ports():
+    assert_db()
     return session.query(EmergencyPort).all()
 
 
 @app.get("/emergency_ports/closest", response_model=EmergencyPortModel, description="Get the closest emergency port to a given location")
 def read_closest_emergency_port(lat: float, lon: float):
+    assert_db()
     return get_closest_entity(lat, lon, session.query(EmergencyPort), EmergencyPort)
 
 
 @app.get("/emergency_depots", response_model=List[EmergencyDepotModel], description="Get all emergency depots")
 def read_emergency_depots():
+    assert_db()
     return session.query(EmergencyDepot).all()
 
 
 @app.get("/emergency_depots/closest", response_model=EmergencyDepotModel, description="Get the closest emergency depot to a given location")
 def read_closest_emergency_depot(lat: float, lon: float):
+    assert_db()
     return get_closest_entity(lat, lon, session.query(EmergencyDepot), EmergencyDepot)
