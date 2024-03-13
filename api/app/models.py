@@ -11,7 +11,7 @@ class PreparednessResourceModel(BaseModel):
         from_attributes = False
 
 class HospitalModel(PreparednessResourceModel):
-    pass
+    has_helipad: bool = False
 
 class AirportModel(PreparednessResourceModel):
     pass

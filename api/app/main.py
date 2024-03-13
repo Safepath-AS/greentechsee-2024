@@ -1,5 +1,3 @@
-import random
-
 from pydantic import BaseModel
 from .utils import haversine
 
@@ -16,7 +14,7 @@ from .openai import query_gpt
 from .api_models import HistoryMessage
 
 from .database import session, Hospital, Airport, SarBase, EmergencyPort, EmergencyDepot, Attribute
-from .models import HospitalModel, AirportModel, SarBaseModel, EmergencyPortModel, EmergencyDepotModel
+from .models import HospitalModel, AirportModel, PreparednessResourceModel, SarBaseModel, EmergencyPortModel, EmergencyDepotModel
 
 
 app = FastAPI()
@@ -68,11 +66,10 @@ async def query(query: str, history: list[HistoryMessage] = []):
         'content': response['message'],
     }
 
-
-def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta], has_helipad: Optional[bool] = None):
+def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[DeclarativeMeta], needs_helipad: Optional[bool] = None):
     attributes = []
-    if has_helipad is not None:
-        helipad_subquery = session.query(entity.id).join(Attribute, entity.id == Attribute.entity_id).filter(and_(Attribute.attribute_name == 'helipad', Attribute.attribute_value == str(has_helipad).lower())).subquery()
+    if needs_helipad is not None and needs_helipad is True:
+        helipad_subquery = session.query(entity.id).join(Attribute, entity.id == Attribute.entity_id).filter(and_(Attribute.attribute_name == 'helipad', Attribute.attribute_value == str(needs_helipad).lower())).subquery()
         attributes.append(helipad_subquery)
 
     if attributes:
@@ -91,7 +88,14 @@ def get_closest_entity(lat: float, lon: float, query: Query, entity: Type[Declar
         distance = haversine(lon, lat, entity.longitude, entity.latitude)
         if distance < min_distance:
             min_distance = distance
-            closest_entity = entity
+            closest_entity = HospitalModel(
+                id=entity.id,
+                name=entity.name,
+                commune=entity.commune,
+                latitude=entity.latitude,
+                longitude=entity.longitude,
+                has_helipad=True if needs_helipad is True else False
+            ) if isinstance(entity, Hospital) else entity
     return closest_entity
 
 
@@ -107,9 +111,9 @@ def read_hospitals():
 
 
 @app.get("/hospitals/closest", response_model=HospitalModel, description="Get the closest hospital to a given location")
-def read_closest_hospital(lat: float, lon: float, has_helipad: Optional[bool] = None):
+def read_closest_hospital(lat: float, lon: float, needs_helipad: Optional[bool] = None):
     assert_db()
-    return get_closest_entity(lat, lon, session.query(Hospital), Hospital, has_helipad)
+    return get_closest_entity(lat, lon, session.query(Hospital), Hospital, needs_helipad)
 
 
 @app.get("/airports", response_model=List[AirportModel], description="Get all airports")
