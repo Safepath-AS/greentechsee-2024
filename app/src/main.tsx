@@ -12,8 +12,8 @@ const queryClient = new QueryClient();
 const resources = {
   en: {
     translation: {
-      type_a_message: "Type a message...",
-      init: "Hi!",
+      type_a_message: "Ask about emergency resources...",
+      init: "Hi! I can help you locate emergency resources.",
       thinking: "Thinking...",
       error: "Failed, please try again.",
       language_changed: "OK, I've changed the language.",
@@ -33,8 +33,8 @@ const resources = {
   },
   no: {
     translation: {
-      type_a_message: "Skriv en melding...",
-      init: "Hei!",
+      type_a_message: "Spør om nødressurser...",
+      init: "Hei! Jeg kan hjelpe deg med å finne nødressurser.",
       thinking: "Tenker...",
       error: "Failed, please try again.",
       language_changed: "OK, jeg har endret språk.",
