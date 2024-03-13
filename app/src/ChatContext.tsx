@@ -14,6 +14,7 @@ import { ClosestSarBaseResponse } from "./SarBaseMarkers";
 import { UserLocationResponse } from "./UserLocationMarker";
 import { ClosestEmergencyPortResponse } from "./EmergencyPortMarkers";
 import { ClosestEmergencyDepotResponse } from "./EmergencyDepotMarkers";
+import { useTranslation } from "react-i18next";
 
 export type MessageReceivedCallback = (
   message: Message
@@ -29,10 +30,14 @@ export type MessageData =
   | ClosestEmergencyDepotResponse;
 export type MessageDataType = MessageData["type"];
 
+export type MessageContent =
+  | string
+  | { t: string; values: { [key: string]: string } };
+
 export interface Message {
   type: "message";
   author: string;
-  content: string;
+  content: MessageContent;
   you?: boolean;
   data?: MessageData;
 }
@@ -59,6 +64,7 @@ export const ChatContext = createContext<ChatContextData>({
 });
 
 export const ChatProvider = ({ children }: PropsWithChildren) => {
+  const { t, i18n } = useTranslation();
   const sendQuery = useSendQuery();
 
   const [waiting, setWaiting] = useState(false);
@@ -66,7 +72,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
     {
       type: "message",
       author: "AI",
-      content: "Hi there!",
+      content: { t: "init", values: {} },
     },
   ]);
 
@@ -80,7 +86,16 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
 
     setWaiting(true);
     try {
-      const result = await sendQuery(message, messages);
+      const result = await sendQuery(
+        message,
+        messages.map(({ content, ...rest }) => ({
+          content:
+            typeof content === "string"
+              ? content
+              : t(content.t, content.values),
+          ...rest,
+        }))
+      );
       if (result) {
         if (result.type === "message") {
           addMessage(result as Message);
@@ -88,12 +103,19 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           // '{"latitude":62.737235,"longitude":7.160731}'
           const args = JSON.parse(result.arguments.replace(/'/g, '"'));
 
-          if (result.function === "get_user_location") {
+          if (result.function === "change_language") {
+            i18n.changeLanguage(args.language);
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: { t: "language_changed", values: {} },
+            });
+          } else if (result.function === "get_user_location") {
             const position = await getPosition();
             addMessage({
               type: "message",
               author: "AI",
-              content: "Here is your current location.",
+              content: { t: "current_location_response", values: {} },
               data: {
                 type: "userLocation",
                 location: {
@@ -112,7 +134,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest hospital is ${hospital.name} in ${hospital.commune}.`,
+              content: {
+                t: "closest_hospital_response",
+                values: {
+                  name: hospital.name,
+                  commune: hospital.commune,
+                },
+              },
               data: {
                 type: "hospital",
                 hospital: hospital,
@@ -128,7 +156,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest airport is ${airport.name} in ${airport.commune}.`,
+              content: {
+                t: "closest_airport_response",
+                values: {
+                  name: airport.name,
+                  commune: airport.commune,
+                },
+              },
               data: {
                 type: "airport",
                 airport: airport,
@@ -144,7 +178,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest search and rescue helicopter base is ${sarBase.name} in ${sarBase.commune}.`,
+              content: {
+                t: "closest_sar_base_response",
+                values: {
+                  name: sarBase.name,
+                  commune: sarBase.commune,
+                },
+              },
               data: {
                 type: "sarBase",
                 sarBase: sarBase,
@@ -160,7 +200,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest emergency port is ${emergencyPort.name} in ${emergencyPort.commune}.`,
+              content: {
+                t: "closest_emergency_port_response",
+                values: {
+                  name: emergencyPort.name,
+                  commune: emergencyPort.commune,
+                },
+              },
               data: {
                 type: "emergencyPort",
                 emergencyPort: emergencyPort,
@@ -176,7 +222,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest emergency depot is ${emergencyDepot.name} in ${emergencyDepot.commune}.`,
+              content: {
+                t: "closest_emergency_depot_response",
+                values: {
+                  name: emergencyDepot.name,
+                  commune: emergencyDepot.commune,
+                },
+              },
               data: {
                 type: "emergencyDepot",
                 emergencyDepot: emergencyDepot,
@@ -188,14 +240,14 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
         addMessage({
           type: "message",
           author: "AI",
-          content: "Failed, please try again.",
+          content: { t: "error", values: {} },
         });
       }
     } catch (error) {
       addMessage({
         type: "message",
         author: "AI",
-        content: "Failed, please try again.",
+        content: { t: "error", values: {} },
       });
       console.error(error);
     }

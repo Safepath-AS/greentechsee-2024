@@ -139,6 +139,22 @@ tools = [
       },
     },
   },
+  {
+    "type": "function",
+    "function": {
+      "name": "change_language",
+      "description": "Let's the user change language. Guess the closest language if the user's language is not supported.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "language": {
+            "type": "string",
+            "description": "Norwegian `no` or English `en`",
+          },
+        },
+      },
+    },
+  },
   # {
   #   "type": "function",
   #   "function": {

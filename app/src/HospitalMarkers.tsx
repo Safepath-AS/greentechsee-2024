@@ -20,8 +20,6 @@ export const HospitalMarkers = () => {
   const map = useMap();
   const { hospitals } = useHospitals();
 
-  console.log("rendered hospitals");
-
   useOnMessage((message) => {
     if (message.data?.type === "hospital") {
       const hospital = message.data.hospital;
