@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from openai import AsyncOpenAI
 
 from .config import config
@@ -7,12 +9,91 @@ client = AsyncOpenAI(
   api_key=config.openai_api_key,
 )
 
+
+system = '''
+Your role is to assist a captain in need aboard a seafaring vessel in finding nearby emergency
+resources for when the vessel is in distress. Your tools include the ability to find the nearby
+emergency resources.
+
+Reply in Norwegian or English.
+'''
+
+tools = [
+  {
+    "type": "function",
+    "function": {
+      "name": "get_closest_hospital",
+      "description": "Displays the closest hospital to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_closest_airport",
+      "description": "Displays the closest airport to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_closest_sar_base",
+      "description": "Displays the closest searh and rescue helicopter base to a given location. Omit the latitude and longitude if the user asks for their own position.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location.",
+          },
+          "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location.",
+          },
+        },
+      },
+    },
+  },
+  {
+    "type": "function",
+    "function": {
+      "name": "get_user_location",
+      "description": "Displays the user's location. NOTE: Must only be used if the user explicitly asks to see their current location.",
+    },
+  },
+]
+
 async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
   '''Query GPT for a response.'''
   messages = [
     {
       "role": "system",
-      "content": "You are a helpful assistant. Reply in Norwegian or English.",
+      "content": system,
     }
   ]
 
@@ -30,75 +111,7 @@ async def query_gpt(prompt: str, history: list[HistoryMessage]) -> str:
   completion = await client.chat.completions.create(
     model="gpt-4-turbo-preview",
     messages=messages,
-    tools=[
-      {
-        "type": "function",
-        "function": {
-          "name": "get_user_location",
-          "description": "Get the user's location. This function should be called when the user asks for their own location.",
-        },
-      },
-      {
-        "type": "function",
-        "function": {
-          "name": "get_closest_hospital",
-          "description": "Get the closest hospital to a given location. Omit the latitude and longitude if the user asks for their own position.",
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "latitude": {
-                "type": "number",
-                "description": "The latitude of the user's location.",
-              },
-              "longitude": {
-                "type": "number",
-                "description": "The longitude of the user's location.",
-              },
-            },
-          },
-        },
-      },
-      {
-        "type": "function",
-        "function": {
-          "name": "get_closest_airport",
-          "description": "Get the closest airport to a given location. Omit the latitude and longitude if the user asks for their own position.",
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "latitude": {
-                "type": "number",
-                "description": "The latitude of the user's location.",
-              },
-              "longitude": {
-                "type": "number",
-                "description": "The longitude of the user's location.",
-              },
-            },
-          },
-        },
-      },
-      {
-        "type": "function",
-        "function": {
-          "name": "get_closest_sar_base",
-          "description": "Get the closest searh and rescue helicopter base to a given location. Omit the latitude and longitude if the user asks for their own position.",
-          "parameters": {
-            "type": "object",
-            "properties": {
-              "latitude": {
-                "type": "number",
-                "description": "The latitude of the user's location.",
-              },
-              "longitude": {
-                "type": "number",
-                "description": "The longitude of the user's location.",
-              },
-            },
-          },
-        },
-      }
-    ],
+    tools=tools,
   )
 
   choice = completion.choices[0]

@@ -143,6 +143,11 @@ const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
+              if (!text && e.key === "Enter") {
+                return;
+              }
+
+              e.stopPropagation();
               send(text);
               setText("");
             }
