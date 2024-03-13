@@ -1,14 +1,17 @@
 import { useEffect } from "react";
-import { MessageReceivedCallback } from "./ChatContext";
+import { MessageDataType, MessageReceivedCallback } from "./ChatContext";
 import { useChatContext } from "./useChatContext";
 
-export const useOnMessage = (callback: MessageReceivedCallback) => {
+export const useOnMessage = (
+  callback: MessageReceivedCallback,
+  type?: MessageDataType
+) => {
   const context = useChatContext();
 
   useEffect(() => {
-    context.subscribe(callback);
+    context.subscribe(callback, type);
     return () => {
       context.unsubscribe(callback);
     };
-  }, [callback, context]);
+  }, [callback, context, type]);
 };

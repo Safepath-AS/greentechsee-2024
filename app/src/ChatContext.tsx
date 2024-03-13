@@ -2,6 +2,7 @@ import { PropsWithChildren, createContext, useRef, useState } from "react";
 import { WhatAreYouSinkingAboutResponse } from "./WhatAreYouSinkingAbout";
 import {
   getClosestAirport,
+  getClosestEmergencyPort,
   getClosestHospital,
   getClosestSarBase,
   getUserLocation,
@@ -11,22 +12,34 @@ import { ClosestHospitalResponse } from "./HospitalMarkers";
 import { ClosestAirportResponse } from "./AirportMarkers";
 import { ClosestSarBaseResponse } from "./SarBaseMarkers";
 import { UserLocationResponse } from "./UserLocationMarker";
+import { ClosestEmergencyPortResponse } from "./EmergencyPortMarkers";
+import { ClosestEmergencyDepotResponse } from "./EmergencyDepotMarkers";
+import { useTranslation } from "react-i18next";
 
 export type MessageReceivedCallback = (
   message: Message
 ) => void | Promise<void>;
 
+export type MessageData =
+  | UserLocationResponse
+  | WhatAreYouSinkingAboutResponse
+  | ClosestHospitalResponse
+  | ClosestAirportResponse
+  | ClosestSarBaseResponse
+  | ClosestEmergencyPortResponse
+  | ClosestEmergencyDepotResponse;
+export type MessageDataType = MessageData["type"];
+
+export type MessageContent =
+  | string
+  | { t: string; values: { [key: string]: string } };
+
 export interface Message {
   type: "message";
   author: string;
-  content: string;
+  content: MessageContent;
   you?: boolean;
-  data?:
-    | UserLocationResponse
-    | WhatAreYouSinkingAboutResponse
-    | ClosestHospitalResponse
-    | ClosestAirportResponse
-    | ClosestSarBaseResponse;
+  data?: MessageData;
 }
 
 interface ChatContextData {
@@ -34,7 +47,10 @@ interface ChatContextData {
   waiting: boolean;
   addMessage: (message: Message) => void;
   send: (message: string) => void;
-  subscribe: (callback: MessageReceivedCallback) => void;
+  subscribe: (
+    callback: MessageReceivedCallback,
+    type?: MessageDataType
+  ) => void;
   unsubscribe: (callback: MessageReceivedCallback) => void;
 }
 
@@ -48,6 +64,7 @@ export const ChatContext = createContext<ChatContextData>({
 });
 
 export const ChatProvider = ({ children }: PropsWithChildren) => {
+  const { t, i18n } = useTranslation();
   const sendQuery = useSendQuery();
 
   const [waiting, setWaiting] = useState(false);
@@ -55,7 +72,7 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
     {
       type: "message",
       author: "AI",
-      content: "Hi there!",
+      content: { t: "init", values: {} },
     },
   ]);
 
@@ -69,7 +86,16 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
 
     setWaiting(true);
     try {
-      const result = await sendQuery(message, messages);
+      const result = await sendQuery(
+        message,
+        messages.map(({ content, ...rest }) => ({
+          content:
+            typeof content === "string"
+              ? content
+              : t(content.t, content.values),
+          ...rest,
+        }))
+      );
       if (result) {
         if (result.type === "message") {
           addMessage(result as Message);
@@ -77,12 +103,19 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
           // '{"latitude":62.737235,"longitude":7.160731}'
           const args = JSON.parse(result.arguments.replace(/'/g, '"'));
 
-          if (result.function === "get_user_location") {
+          if (result.function === "change_language") {
+            i18n.changeLanguage(args.language);
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: { t: "language_changed", values: {} },
+            });
+          } else if (result.function === "get_user_location") {
             const position = await getPosition();
             addMessage({
               type: "message",
               author: "AI",
-              content: "Here is your current location.",
+              content: { t: "current_location_response", values: {} },
               data: {
                 type: "userLocation",
                 location: {
@@ -101,7 +134,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest hospital is ${hospital.name} in ${hospital.commune}.`,
+              content: {
+                t: "closest_hospital_response",
+                values: {
+                  name: hospital.name,
+                  commune: hospital.commune,
+                },
+              },
               data: {
                 type: "hospital",
                 hospital: hospital,
@@ -117,7 +156,13 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest airport is ${airport.name} in ${airport.commune}.`,
+              content: {
+                t: "closest_airport_response",
+                values: {
+                  name: airport.name,
+                  commune: airport.commune,
+                },
+              },
               data: {
                 type: "airport",
                 airport: airport,
@@ -133,10 +178,60 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
             addMessage({
               type: "message",
               author: "AI",
-              content: `The closest search and rescue helicopter base is ${sarBase.name} in ${sarBase.commune}.`,
+              content: {
+                t: "closest_sar_base_response",
+                values: {
+                  name: sarBase.name,
+                  commune: sarBase.commune,
+                },
+              },
               data: {
                 type: "sarBase",
                 sarBase: sarBase,
+              },
+            });
+          } else if (result.function === "get_closest_emergency_port") {
+            const position = await getPosition(args);
+
+            const emergencyPort = await getClosestEmergencyPort(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: {
+                t: "closest_emergency_port_response",
+                values: {
+                  name: emergencyPort.name,
+                  commune: emergencyPort.commune,
+                },
+              },
+              data: {
+                type: "emergencyPort",
+                emergencyPort: emergencyPort,
+              },
+            });
+          } else if (result.function === "get_closest_emergency_depot") {
+            const position = await getPosition(args);
+
+            const emergencyDepot = await getClosestSarBase(
+              position.latitude,
+              position.longitude
+            );
+            addMessage({
+              type: "message",
+              author: "AI",
+              content: {
+                t: "closest_emergency_depot_response",
+                values: {
+                  name: emergencyDepot.name,
+                  commune: emergencyDepot.commune,
+                },
+              },
+              data: {
+                type: "emergencyDepot",
+                emergencyDepot: emergencyDepot,
               },
             });
           }
@@ -145,14 +240,14 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
         addMessage({
           type: "message",
           author: "AI",
-          content: "Failed, please try again.",
+          content: { t: "error", values: {} },
         });
       }
     } catch (error) {
       addMessage({
         type: "message",
         author: "AI",
-        content: "Failed, please try again.",
+        content: { t: "error", values: {} },
       });
       console.error(error);
     }
@@ -160,21 +255,28 @@ export const ChatProvider = ({ children }: PropsWithChildren) => {
     setWaiting(false);
   };
 
-  const subscribersRef = useRef<Array<MessageReceivedCallback>>([]);
+  const subscribersRef = useRef<
+    Array<{ callback: MessageReceivedCallback; type?: MessageDataType }>
+  >([]);
 
-  const subscribe = (callback: MessageReceivedCallback) => {
-    subscribersRef.current.push(callback);
+  const subscribe = (
+    callback: MessageReceivedCallback,
+    type?: MessageDataType
+  ) => {
+    subscribersRef.current.push({ callback, type });
   };
 
   const unsubscribe = (callback: MessageReceivedCallback) => {
     subscribersRef.current = subscribersRef.current.filter(
-      (cb) => cb !== callback
+      ({ callback: cb }) => cb !== callback
     );
   };
 
   const notifySubscribers = (message: Message) => {
-    subscribersRef.current.forEach((subscriber) => {
-      subscriber(message);
+    subscribersRef.current.forEach(({ callback, type }) => {
+      if (!type || type === message.data?.type) {
+        callback(message);
+      }
     });
   };
 

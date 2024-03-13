@@ -16,7 +16,7 @@
 }
 
 .chat.collapsed {
-  height: calc(var(--spacing) * 10);
+  height: calc(var(--spacing) * 16);
   overflow: hidden;
   user-select: none;
   cursor: pointer;
@@ -26,36 +26,6 @@
 
 .chat:hover {
   box-shadow: -8px 8px 49px -11px rgba(0, 0, 0, 0.6);
-}
-
-@media (max-width: 768px) {
-  .chat {
-    width: calc(100vw - calc(var(--chat-margin) * 2));
-    bottom: var(--chat-margin);
-    right: var(--chat-margin);
-    height: 40vh;
-  }
-
-  /* .chat.collapsed {
-    width: 100%;
-  } */
-}
-
-@media (min-width: 768px) {
-  .chat {
-    top: var(--chat-margin);
-    right: var(--chat-margin);
-    width: 400px;
-    height: 600px;
-  }
-
-  .chat.collapsed {
-    width: 250px;
-  }
-
-  .chat.collapsed:hover {
-    width: 400px;
-  }
 }
 
 .chat-content {
@@ -82,7 +52,7 @@
   flex-direction: column-reverse;
   width: calc(100% - var(--spacing) * 2);
   height: 100%;
-  min-height: 70px;
+  min-height: 122px;
   overflow: hidden;
   padding: var(--spacing);
 }
@@ -116,6 +86,16 @@
   margin-bottom: var(--spacing);
 }
 
+.automated {
+  display: inline;
+  content: "translated";
+  color: rgba(0, 0, 0, 0.3);
+  margin-left: var(--spacing);
+  background-color: rgba(0, 0, 0, 0.08);
+  padding: 3px 7px;
+  border-radius: var(--border-radius);
+}
+
 .chat-input {
   display: flex;
   align-items: center;
@@ -134,4 +114,38 @@
 .chat-input > textarea {
   width: 100%;
   transition: all 0.1s ease-in-out;
+}
+
+@media (max-width: 768px) {
+  .chat {
+    width: calc(100vw - calc(var(--chat-margin) * 2));
+    bottom: var(--chat-margin);
+    right: var(--chat-margin);
+    height: 60vh;
+  }
+
+  .chat.collapsed {
+    height: calc(var(--spacing) * 14);
+  }
+
+  .messages {
+    min-height: 102px;
+  }
+}
+
+@media (min-width: 768px) {
+  .chat {
+    top: var(--chat-margin);
+    right: var(--chat-margin);
+    width: 400px;
+    height: 600px;
+  }
+
+  .chat.collapsed {
+    width: 250px;
+  }
+
+  .chat.collapsed:hover {
+    width: 400px;
+  }
 }

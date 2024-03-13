@@ -26,7 +26,7 @@ export const WhatAreYouSinkingAbout = () => {
         popupRef.current?.toggle();
       }, 1500);
     }
-  });
+  }, "sinking");
 
   return (
     <>

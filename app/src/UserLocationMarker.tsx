@@ -21,7 +21,7 @@ export const UserLocationMarker = () => {
       });
       setUserLocation({ latitude, longitude });
     }
-  });
+  }, "userLocation");
 
   return (
     <>

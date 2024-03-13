@@ -30,13 +30,13 @@ export const AirportMarkers = () => {
         popupRef.current?.toggle();
       }, 1500);
     }
-  });
+  }, "airport");
 
   return (
     <>
-      {airports?.map((airport) => (
+      {airports?.map((airport, index) => (
         <Marker
-          key={airport.name}
+          key={index}
           position={[airport.latitude, airport.longitude]}
           icon={icon}
         >

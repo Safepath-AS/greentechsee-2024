@@ -7,6 +7,9 @@ import { WhatAreYouSinkingAbout } from "./WhatAreYouSinkingAbout";
 import { HospitalMarkers } from "./HospitalMarkers";
 import { AirportMarkers } from "./AirportMarkers";
 import { SarBaseMarkers } from "./SarBaseMarkers";
+import { EmergencyPortMarkers } from "./EmergencyPortMarkers";
+import { EmergencyDepotMarkers } from "./EmergencyDepotMarkers";
+import MarkerClusterGroup from "react-leaflet-cluster";
 
 export const Map = forwardRef<LeafletMap>((_props, ref) => {
   return (
@@ -22,11 +25,15 @@ export const Map = forwardRef<LeafletMap>((_props, ref) => {
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <UserLocationMarker />
-      <HospitalMarkers />
-      <AirportMarkers />
-      <SarBaseMarkers />
-      <WhatAreYouSinkingAbout />
+      <MarkerClusterGroup disableClusteringAtZoom={8}>
+        <UserLocationMarker />
+        <HospitalMarkers />
+        <AirportMarkers />
+        <SarBaseMarkers />
+        <EmergencyPortMarkers />
+        <EmergencyDepotMarkers />
+        <WhatAreYouSinkingAbout />
+      </MarkerClusterGroup>
     </MapContainer>
   );
 });

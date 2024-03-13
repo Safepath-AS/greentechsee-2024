@@ -3,6 +3,8 @@ import "./Chat.css";
 import { useMessages } from "./useMessages";
 import { useSendMessage } from "./useSendMessages";
 import { useWaiting } from "./useWaiting";
+import { useTranslation } from "react-i18next";
+import { MessageContent } from "./ChatContext";
 
 interface ChatProps {
   onBlur: () => void;
@@ -61,7 +63,7 @@ export const Chat = ({ onBlur }: ChatProps) => {
                   {
                     type: "message",
                     author: "AI",
-                    content: "Thinking...",
+                    content: { t: "thinking", values: {} },
                   },
                 ]
               : []),
@@ -108,15 +110,23 @@ export const Chat = ({ onBlur }: ChatProps) => {
 
 interface MessageProps {
   author: string;
-  content: string;
+  content: MessageContent;
   you?: boolean;
 }
 
 const Message = ({ author, content, you }: MessageProps) => {
+  const { t } = useTranslation();
+  const automated = typeof content !== "string";
+
   return (
     <div className={you ? "message you" : "message"}>
-      <div className="message-author">{author}</div>
-      <div className="message-content">{content}</div>
+      <div className="message-author">
+        {author}
+        {automated && <div className="automated">{t("automated")}</div>}
+      </div>
+      <div className="message-content">
+        {typeof content === "string" ? content : t(content.t, content.values)}
+      </div>
     </div>
   );
 };
@@ -128,8 +138,10 @@ interface ChatInputProps {
 
 const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
   ({ onFocus, onBlur }, ref) => {
+    const { t } = useTranslation();
     const [text, setText] = useState("");
     const send = useSendMessage();
+    const waiting = useWaiting();
 
     return (
       <div className={"chat-input"}>
@@ -137,12 +149,17 @@ const ChatInput = forwardRef<HTMLTextAreaElement, ChatInputProps>(
           ref={ref}
           onFocus={onFocus}
           onBlur={onBlur}
-          placeholder="Type a message..."
+          placeholder={t("type_a_message")}
           value={text}
           onChange={(e) => setText(e.target.value)}
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
               e.preventDefault();
+              if (!text || waiting) {
+                return;
+              }
+
+              e.stopPropagation();
               send(text);
               setText("");
             }

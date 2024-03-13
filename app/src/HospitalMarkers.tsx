@@ -31,13 +31,13 @@ export const HospitalMarkers = () => {
         popupRef.current?.toggle();
       }, 1500);
     }
-  });
+  }, "hospital");
 
   return (
     <>
-      {hospitals?.map((hospital) => (
+      {hospitals?.map((hospital, index) => (
         <Marker
-          key={hospital.name}
+          key={index}
           position={[hospital.latitude, hospital.longitude]}
           icon={icon}
         >

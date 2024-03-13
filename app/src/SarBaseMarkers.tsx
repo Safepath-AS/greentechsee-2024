@@ -30,13 +30,13 @@ export const SarBaseMarkers = () => {
         popupRef.current?.toggle();
       }, 1500);
     }
-  });
+  }, "sarBase");
 
   return (
     <>
-      {sarBases?.map((sarBase) => (
+      {sarBases?.map((sarBase, index) => (
         <Marker
-          key={sarBase.name}
+          key={index}
           position={[sarBase.latitude, sarBase.longitude]}
           icon={icon}
         >
