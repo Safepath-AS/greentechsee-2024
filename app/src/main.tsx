@@ -28,6 +28,7 @@ const resources = {
         "The closest emergency port is {{name}} in {{commune}}.",
       closest_emergency_depot_response:
         "The closest emergency depot is {{name}} in {{commune}}.",
+      automated: "system",
     },
   },
   no: {
@@ -46,6 +47,7 @@ const resources = {
         "Nærmeste nødhavn er {{name}} i {{commune}}.",
       closest_emergency_depot_response:
         "Nærmeste nøddepot er {{name}} i {{commune}}.",
+      automated: "system",
     },
   },
 };

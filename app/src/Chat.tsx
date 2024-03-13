@@ -116,9 +116,14 @@ interface MessageProps {
 
 const Message = ({ author, content, you }: MessageProps) => {
   const { t } = useTranslation();
+  const automated = typeof content !== "string";
+
   return (
     <div className={you ? "message you" : "message"}>
-      <div className="message-author">{author}</div>
+      <div className="message-author">
+        {author}
+        {automated && <div className="automated">{t("automated")}</div>}
+      </div>
       <div className="message-content">
         {typeof content === "string" ? content : t(content.t, content.values)}
       </div>
